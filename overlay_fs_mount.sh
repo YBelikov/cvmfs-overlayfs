@@ -27,7 +27,7 @@ create_test_dirs()
 mount_with_metadata_copy()  
 {
     create_test_dirs
-    sudo mount -t overlay overlay -olowerdir=$LOWER_DIR,upperdir=$UPPER_DIR,workdir=$WORK_DIR,metacopy=off $MERGE_DIR
+    sudo mount -t overlay overlay -olowerdir=$LOWER_DIR,upperdir=$UPPER_DIR,workdir=$WORK_DIR,metacopy=on $MERGE_DIR
 }
 
 mount_with_metadata_copy
