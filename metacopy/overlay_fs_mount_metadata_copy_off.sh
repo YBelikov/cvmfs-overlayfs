@@ -1,6 +1,6 @@
 #!/bin/bash
 source ./common.sh
-OVERLAY_FS_MOUNT_POINT="overlay_fs_test_no_metacopy"
+OVERLAY_FS_MOUNT_POINT="overlayfs_metacopy_off"
 UPPER_DIR=/home/$USER/$OVERLAY_FS_MOUNT_POINT/write_dir
 LOWER_DIR=/home/$USER/$OVERLAY_FS_MOUNT_POINT/readonly_dir
 MERGE_DIR=/home/$USER/$OVERLAY_FS_MOUNT_POINT/merge_dir
