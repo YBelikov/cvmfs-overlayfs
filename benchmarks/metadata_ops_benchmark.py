@@ -21,7 +21,9 @@ def benchmark_chmod(files_list):
         start = time.perf_counter()
         os.chmod(filepath, 0o777)
         end = time.perf_counter()
-        total_exec_time += (end - start)
+        
+        # Get execution time in ms
+        total_exec_time += (end - start) * 1000 
 
     # Just setting file modes back to -rw-r--r--  
     for filepath in files_list:
@@ -29,7 +31,11 @@ def benchmark_chmod(files_list):
     return total_exec_time
 
 def benchmark_chmod_avg(path, test_suites):
-    files_list = list_absolute_file_paths(path)
+    chmod_results = list()
+    if os.path.isdir(path):
+        files_list = list_absolute_file_paths(path)
+    elif os.path.isfile(path):
+        files_list = [path]
     chmod_results = [benchmark_chmod(files_list) for i in range(test_suites)] 
     chmod_avg = average(chmod_results)
     return chmod_avg

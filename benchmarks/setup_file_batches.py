@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 import os
-import matplotlib.pyplot as plt
 from create_test_dir import produce_dir
-from file_ops_benchmark import benchmark_chmod_avg
+from metadata_ops_benchmark import benchmark_chmod_avg, benchmark_write_avg
 
 from optparse import OptionParser
 
@@ -16,10 +15,12 @@ def setup_dir_structure(base_dir, number_of_directories, number_of_files, lower_
     dir_to_size_dict = dict()
     for i in range(number_of_directories):
         dir_path = "".join([base_dir, '/', dir_name_pattern, f'_{i}']) #os.path.join([base_dir, dir_name_pattern, f'_{(i+1)}'])
+        size_in_dir = lower_size_bound + i * size_step
+        print(size_in_dir)
         if os.path.exists(dir_path):
+            dir_to_size_dict[dir_path] = size_in_dir
             continue
         os.makedirs(dir_path)
-        size_in_dir = lower_size_bound + i * size_step
         produce_dir(dir_path, number_of_files, size_in_dir, size_in_dir, size_in_dir)
         dir_to_size_dict[dir_path] = size_in_dir
     return dir_to_size_dict
@@ -28,18 +29,9 @@ def launch_benchmarks_per_each_dir(dir_to_size_dict):
     size_to_avg_chown = dict()
     for dir in dir_to_size_dict.keys():
         result = benchmark_chmod_avg(dir, 1000)
+        # usage of dict is inapropriate as fs objects may have the same size
         size_to_avg_chown[dir_to_size_dict[dir]] = result
     return size_to_avg_chown
-
-def plot_benchmark_results(size_to_avg_time):
-    x = list(size_to_avg_time.keys())
-    y = list(size_to_avg_time.values())      
-    plt.title("chmod benchmarking") 
-    plt.xlabel('File sizes') 
-    plt.ylabel('Avg time is sec') 
-    plt.yticks(y) 
-    plt.plot(x, y, marker = 'o', c = 'g') 
-    plt.show()
 
 def main():
     usage = 'usage: <target path> [options]\n\
@@ -63,8 +55,6 @@ def main():
     
     # TODO: Add preliminary check on the availability of disk space before running this script
     dir_to_size = setup_dir_structure(base_dir, number_of_directories, number_of_files, lower_size_bound, upper_size_bound)
-    size_to_avg_time = launch_benchmarks_per_each_dir(dir_to_size)
-    plot_benchmark_results(size_to_avg_time)
 
 if __name__ == '__main__':
     main()

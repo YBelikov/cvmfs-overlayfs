@@ -9,28 +9,29 @@ def log_error(message):
 
 def produce_dir(path, number_of_files, min_file_size, max_file_size, big_file_threshold):
     print("on dir producing")
-    max_int_c = 4294967296 # 2^32, the size of C-int on 32-bit platforms
+    buffer_size = 1048576 # 2^30, the size of C-int on 32-bit platforms
     os.makedirs(path, exist_ok=True)
     file_prefix = ""  
     for i in range(number_of_files):
         file_size = random.randint(min_file_size, max_file_size)
+        print(f"File size: {file_size}")
         if file_size >= big_file_threshold:
             file_prefix = "big_file"
         else:
             file_prefix = "regular_file"
         target_file_path = "".join([path, '/', file_prefix, f'_{i}'])
         with open(target_file_path, '+wb') as target_file:
-            bits_to_write = file_size << 3
-            while bits_to_write >= (max_int_c >> 5):
-                target_file.write(random.randbytes(max_int_c >> 5))
-                bits_to_write -= (max_int_c >> 2)
-            if bits_to_write > 0:
-                target_file.write(random.randbytes(bits_to_write >> 3))
-
+            while file_size > 0:
+                if file_size > buffer_size:
+                    target_file.write(random.randbytes(buffer_size))
+                    file_size -= buffer_size
+                else:
+                    target_file.write(random.randbytes(file_size))
+                    file_size = 0
 def main():
     #command line parameter parser setup
     usage = "usage: %prog [options] <destination path>\n\
-    This creates dummy file system content based on the parameters provided."
+    This creates dummy folder filled with files in the specified range."
     parser = OptionParser(usage)
     parser.add_option("-n", "--number-of-files",    dest="number_of_files",     default=100,    help="the number of files to be generated in the given directory")
     parser.add_option("-l", "--min-file-size",      dest="min_file_size",       default=0,      help="minimal file size for random file contents in bytes")

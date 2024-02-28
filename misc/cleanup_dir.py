@@ -1,8 +1,7 @@
 import os
+import shutil
 import sys
-
-def log_error(message):
-    print(f"[ERROR]: {message}")
+from logging import log_error
 
 def list_absolute_file_paths(path):
     return [os.path.join(path, file) for file in os.listdir(path)]
@@ -21,7 +20,7 @@ def main():
     files_to_remove = list_absolute_file_paths(target_dir)
     for file in files_to_remove:
         if os.path.isdir(file):
-            os.rmdir(file)
+            shutil.rmtree(file)
         elif os.path.isfile(file):
             os.remove(file)
         else:
