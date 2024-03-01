@@ -29,6 +29,15 @@ def benchmark_chmod(file_path):
     os.chmod(file_path, 0o644)
     return end_time - start_time
 
+def benchmark_write(file_path):
+    from random import randbytes
+    with open(file_path, 'ab') as f:
+        start = perf_counter()
+        f.write(randbytes(10))       
+        end = perf_counter()
+        f.flush()
+    return end - start
+
 # Runs command for each file in a given FS object: 
 def benchmark_avg_chmod(file_system_object_path, number_of_runs):
     sizes = list()
