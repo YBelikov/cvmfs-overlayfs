@@ -9,7 +9,8 @@ def log_error(message):
 
 def produce_dir(path, number_of_files, min_file_size, max_file_size, big_file_threshold):
     print("on dir producing")
-    buffer_size = 1048576 # 2^30, the size of C-int on 32-bit platforms
+    # 2^30, the size of C-int on 32-bit platforms
+    buffer_size = 1048576 
     os.makedirs(path, exist_ok=True)
     file_prefix = ""  
     for i in range(number_of_files):
@@ -20,7 +21,7 @@ def produce_dir(path, number_of_files, min_file_size, max_file_size, big_file_th
         else:
             file_prefix = "regular_file"
         target_file_path = "".join([path, '/', file_prefix, f'_{i}'])
-        with open(target_file_path, '+wb') as target_file:
+        with open(target_file_path, 'wb') as target_file:
             while file_size > 0:
                 if file_size > buffer_size:
                     target_file.write(random.randbytes(buffer_size))

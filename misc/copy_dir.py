@@ -1,6 +1,6 @@
 import shutil
 import sys
-from logging import log_error
+from log import log_error
 
 def main():
     if len(sys.argv) != 3:
