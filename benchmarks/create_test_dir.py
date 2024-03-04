@@ -1,15 +1,13 @@
 #!/usr/bin/env python
+
 import os
 import random
 from optparse import OptionParser
-import sys
-
-def log_error(message):
-    print(f"[ERROR]: {message}")
+from misc.log import *
 
 def produce_dir(path, number_of_files, min_file_size, max_file_size, big_file_threshold):
-    print("on dir producing")
-    # 2^30, the size of C-int on 32-bit platforms
+    Logger.log(LogLevel.INFO, "On dir producing")
+    # 2^30 just arbitrary huge number of bytes that could be written with randbytes without C-int overflow 
     buffer_size = 1048576 
     os.makedirs(path, exist_ok=True)
     file_prefix = ""  
@@ -20,7 +18,7 @@ def produce_dir(path, number_of_files, min_file_size, max_file_size, big_file_th
             file_prefix = "big_file"
         else:
             file_prefix = "regular_file"
-        target_file_path = "".join([path, '/', file_prefix, f'_{i}'])
+        target_file_path = os.path.join(path, f'{file_prefix}_{i}')
         with open(target_file_path, 'wb') as target_file:
             while file_size > 0:
                 if file_size > buffer_size:
@@ -48,7 +46,9 @@ def main():
         max_file_size      = int(options.max_file_size)
         big_file_threshold = int(options.big_file_threshold)
     except ValueError:
-        log_error("Cannot parse numerical options and/or parameters")
+        Logger.log(LogLevel.ERROR, "Cannot parse numerical options and/or parameters")
+        exit(1)
+
     target_dir_path = args[0]
     produce_dir(target_dir_path, number_of_files, min_file_size, max_file_size, big_file_threshold)
 

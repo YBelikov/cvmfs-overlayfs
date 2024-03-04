@@ -1,0 +1,34 @@
+ 
+================MOUNTING========================================
+sudo mount -t overlay overlay -o lowerdir=/home/<username>/overlayfs_metacopy_on/lower_dir,upperdir=/home/<username>/overlayfs_metacopy_on/upper_dir,workdir=/home/<username>/overlayfs_metacopy_on/work_dir,redirect_dir=on,metacopy=on /home/<username>/overlayfs_metacopy_on/merge_dir
+sudo mount -t overlay overlay -o lowerdir=/home/<username>/overlayfs_metacopy_off/lower_dir,upperdir=/home/<username>/overlayfs_metacopy_off/upper_dir,workdir=/home/<username>/overlayfs_metacopy_off/work_dir /home/<username>/overlayfs_metacopy_off/merge_dir
+
+================EXAMPLES OF CREATING A BATCH OF SUBDIRS WITH FILES OF EQUAL SIZES IN EACH SUBDIR=========================
+
+# BE AWARE OF USING THIS, YOUR HARD DRIVE CAPACITY MAY BE LOWER
+python ~/Development/cvmfs-overlayfs/benchmarks/setup_file_batches.py ~/overlayfs_metacopy_off/lower_dir/ --number-of-directories=5 --number-of-files=100 --lower-size-bound=1000000 --upper-size-bound=100000000
+
+python ~/Development/cvmfs-overlayfs/benchmarks/setup_file_batches.py ~/base_dir --number-of-directories=50 --number-of-files=100 --lower-size-bound=500000000 --upper-size-bound=700000000
+
+python ~/Development/cvmfs-overlayfs/benchmarks/setup_file_batches.py ~/overlayfs_metacopy_off/lower_dir/ --number-of-directories=50 --number-of-files=100 --lower-size-bound=500000000 --upper-size-bound=700000000
+
+python ~/Development/cvmfs-overlayfs/benchmarks/setup_file_batches.py ~/overlayfs_metacopy_on/lower_dir/ --number-of-directories=50 --number-of-files=100 --lower-size-bound=500000000 --upper-size-bound=700000000
+
+==============================SEEDS A NUMBER OF FILES WITH SIZES WITHIN THE SPECIFIED LOWER AND UPPER BOUNDS================================
+python ~/Development/cvmfs-overlayfs/benchmarks/create_test_dir.py ~/base_dir --number-of-files=50 --min-file-size=1000000000 --max-file-size=3000000000 --big-file-threshold=1500000000
+
+python ~/Development/cvmfs-overlayfs/benchmarks/create_test_dir.py  ~/overlayfs_metacopy_off/lower_dir/ --number-of-files=50 --min-file-size=1000000000 --max-file-size=3000000000 --big-file-threshold=1500000000
+
+python ~/Development/cvmfs-overlayfs/benchmarks/create_test_dir.py  ~/overlayfs_metacopy_on/lower_dir/ --number-of-files=50 --min-file-size=1000000000 --max-file-size=3000000000 --big-file-threshold=1500000000
+
+=============================BENCHMARKS (CURRENTLY CHMOD ONLY)========================================
+python ~/cvmfs-overlayfs/benchmarks/perform_benchmarks.py --path-to-target-dir="~/base_dir" --number-of-runs=1000 --path-to-result="~/no_ovlfs_dir"
+
+python ~/Development/cvmfs-overlayfs/benchmarks/perform_benchmarks.py --path-to-target-dir="~/overlayfs_metacopy_on/merge_dir/" --number-of-runs=1000 --path-to-result="~/ovlfs_features_dir"
+ 
+python ~/Development/cvmfs-overlayfs/benchmarks/perform_benchmarks.py --path-to-target-dir="~/overlayfs_metacopy_off/merge_dir/" --number-of-runs=1000 --path-to-result="~/ovlfs_regular_dir"
+
+
+===========================PLOTTING (ACCEPT PATHS TO DIRS WITH BENCHMARKING RESULTS)=========================================================
+
+python ~/Development/cvmfs-overlayfs/benchmarks/plot_comparison.py --path-to-base-res="~/no_ovlfs_dir" --path-to-tuned-ovfs-res="~/ovlfs_features_dir/" --path-to-regular-ovfs-res="~/ovlfs_regular_dir/"
