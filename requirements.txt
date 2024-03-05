@@ -1,3 +1,2 @@
-optparse
 matplotlib
 scienceplots
