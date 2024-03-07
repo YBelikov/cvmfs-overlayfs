@@ -3,10 +3,10 @@
 <h2>Benchmarking setup:</h2>
 To measure and compare impact made by this feature we decided to focus our investigation on the average execution time of syscalls affecting files' metadata. 
 In particular we were interested in two most frequently performed operations on typical CVMFS repository: chmod and chown. 
-Alma Linux 9 was selected as the main testing OS as it Alma distribution is a principal one in CERN.
+Alma Linux 9 was selected as the main testing OS as Alma distribution is a principal one in CERN.
 
 The benchmarking for chmod operation was performed under the following conditions:
-1. Three directories were created in local filesystem: one that does not belong to overlay FS, one directory used as a lower (readonly) layer in overlay FS without any additional parameters, and one lower layer directory for overlay FS with metacopy only feature.
+1. Three directories were created in local filesystem: one that does not belong to overlay FS, one directory used as a lower (readonly) layer in overlay FS without any additional configuration parameters, and one lower layer directory for overlay FS with metacopy only feature.
 2. create_dir.py script seeded 100 random files in the base dir with sizes in the interval 100 to 300MB that were copied with a corresponding utility script to both lower layer directories.
 3. Both overlay FS were mounted. 
 4. perform_benchmark.py script launched 1000 operations per each file in a directory giving us 100 000 chmod calls.
