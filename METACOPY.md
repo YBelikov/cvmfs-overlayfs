@@ -1,9 +1,9 @@
-<h1>This file contains report about benchmarks measuring performance of various metadata changing operations for Linux OverlayFS with "metacopy" mounting parameter set to "on".</h1>
+<h1>This file contains a report about performance changes in various metadata modifying operations for Linux OverlayFS with "metacopy" mounting parameter set to "on".</h1>
 
 <h2>Benchmarking setup:</h2>
-To measure and compare impact made by this feature we decided to focus our investigation on the average execution time of syscalls affecting files' metadata. 
+To measure and compare impact made by this feature I decided to focus my investigation on the average execution time of syscalls affecting files' metadata. 
 In particular we were interested in two most frequently performed operations on typical CVMFS repository: chmod and chown. 
-Alma Linux 9 was selected as the main testing OS as Alma distribution is a principal one in CERN.
+Alma Linux 9 was selected as the main testing and development OS on physical device as Alma distribution is a principal one in CERN.
 
 The benchmarking for chmod operation was performed under the following conditions:
 1. Three directories were created in local filesystem: one that does not belong to overlay FS, one directory used as a lower (readonly) layer in overlay FS without any additional configuration parameters, and one lower layer directory for overlay FS with metacopy only feature.
