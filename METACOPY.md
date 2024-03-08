@@ -11,7 +11,7 @@ The benchmarking for chmod() operation was performed under the following conditi
 3. Both overlay FS were mounted. 
 4. perform_benchmark.py script launched 1000 operations per each file in a directory giving us 100 000 chmod calls.
 5. The time of each call was measured with time.per_counter().
-6. Benchmarking script gathered information about average time that call took to finish and saved these results as pairs (file size, average execution time) to specified output directories in the text format.
+6. Benchmarking script gathered information about average time that call took to finish and saved these results as tuples (file size, average execution time) to specified output directories in the text format.
 7. plot_comparison.py was used to plot the comparison chart.
 
 <h2>Operating Systems used in the testing and hardware setup</h2>
@@ -38,3 +38,8 @@ The benchmarking for chmod() operation was performed under the following conditi
 - Hardware memory type: SSD (~120 GB of storage available)
 - RAM: 8 GB
 - Processor: Intel i7-10750H @ 5.000GHz (allocated 2 cores of the host OS)
+
+<h2>Results</h2>
+chmod() results for setup 1 (Alma Linux 9)
+
+**First run of benchmarking script:**
