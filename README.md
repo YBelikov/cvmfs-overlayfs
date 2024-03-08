@@ -3,8 +3,21 @@ Currently, the following features are under research:**
 - [Metadata copy only (metacopy=on feature)](https://github.com/YBelikov/cvmfs-overlayfs/blob/main/METACOPY.md)
 - Zero-copy directory renames
 
-To get average time comparison chart you may follow steps described in METACOPY.md or launch run.py Python scripts that perfmors test directories setup, file generation, mounting OverlayFS with different configurations, average operation time measurement per each file size available in testing directories, plotting graphs and unmounting both OverlayFS setups (the last option is a configurable one, you want to keep the setup to repeat your benchmarking).
-Be aware that this script launches mount/umount commands under sudo so you will have to provide your passwords at some point of script execution. On top of that this script doesn't perform cleanup if you won't specify --cleanup-directories=True, or -c True option.
+To get average time comparison chart you may follow steps similar to the described in [METACOPY.md](https://github.com/YBelikov/cvmfs-overlayfs/blob/main/METACOPY.md) but running each script by yourself as well as do mounting/unmounting routine or launch run.py script that perfmors the following:
+1. **Testing directories setup:** on this step the script creates regular directory for baseline measurements, and two separate directories to spawn OverlayFS directory structure (readonly lower layer directory, read-write upper layer directory, merge directory and work directory (scratch area for internal work of OverlayFS)) for mounting regular and tuned (with additional features enabled) filesystems respectively.   
+2. **File generation:** generates specified number of files in the specified size range (in bytes, at least for now) in baseline directory and copies these files to lower layer directories for each OverlayFS setup
+3. **Mounts OverlayFS with different configurations in the created mountpoints** (regular and tuned), requires **sudo** that's why the script may ask your password
+4. **Average operation time measurement** per each file of a certain size available in testing directories: for now you should manually change what you are measuring in [perform_benchmark.py](https://github.com/YBelikov/cvmfs-overlayfs/blob/main/benchmarks/perform_benchmarks.py). I have plans to make it more flexible.
+5. **Saving benchmarking results as text files**: corresponding benchmarking results that represent average ops execution time per a file in each testing directory (baseline directory, regular OverlayFS merge one, and merge directory in tuned OverlayFS) are written to the specified by script's options directory in the following format: ```x (file size) y (average time)``` per line. Benchmarking result per each directory is stored in the separate subdirectory of the output one. 
+6. **Plotting comparison graphs**: the script calls helper function from plot_comparison.py to draw a comparison plot per each operation
+
+<h3>TODO:</h3>
+
+- [ ] **Unmounting OverlayFS**: add a key to run.py options for specifying whether OverlayFS setup should be unmounted at the end.
+- [ ] **Testing directories cleanup**: add a key to run.py options for specifying whether directories used in benchmarking should be removed from local FS.
+- [ ] **Ability to pass any other function to measure it's performance on the given filesystem setup**
+
+Be aware that this script launches mount/umount commands under sudo so you will have to provide your passwords at some point of script execution.
 
 **Features:**
 - **Flexible File Size Configuration:** Set minimum and maximum file sizes to tailor the benchmarking to your specific testing needs.
@@ -12,7 +25,6 @@ Be aware that this script launches mount/umount commands under sudo so you will 
 - **Configurable Directory Paths:** Define custom paths for baseline and OverlayFS directory structures.
 - **Multiple Benchmark Runs:** Execute a defined number of operation runs for thorough performance analysis.
 - **Benchmark Result Export:** Automatically stores benchmarking results to a specified output directory.
-
 
 **Requirements:**
 
