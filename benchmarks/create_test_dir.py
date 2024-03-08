@@ -13,7 +13,6 @@ def produce_dir(path, number_of_files, min_file_size, max_file_size):
     file_prefix = "seeded_file"  
     for i in range(number_of_files):
         file_size = random.randint(min_file_size, max_file_size)
-        print(f"File size: {file_size}")
         target_file_path = os.path.join(path, f'{file_prefix}_{i}')
         with open(target_file_path, 'wb') as target_file:
             while file_size > 0:

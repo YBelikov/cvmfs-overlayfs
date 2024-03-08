@@ -69,7 +69,7 @@ def main():
     parser.add_option('-r', '--overlay-fs-regular-dir', dest='ovlfs_reg_dir', default ='~/ovlfs_regular', help='Path to the directory where overlay FS structure without additional mount params will be spanned')
     parser.add_option('-f', '--overlay-fs-tuned-dir', dest='ovlfs_tuned_dir', default = '~/ovlfs_tuned', help='Path to directory where overlay FS structure with additional params will be spanned')
     parser.add_option('-t', '--runs_num', dest='runs_num', default = 100, help='Number of operation runs during benchmarking')
-    parser.add_option('-o', '--output-path', dest='output_path', default = '~/ovlfs_bencmark_output', help='Path where files with benchmarking results are stored')
+    parser.add_option('-o', '--output-path', dest='output_path', default = '~/ovlfs_benchmark_output', help='Path where files with benchmarking results are stored')
    
     (options, _) = parser.parse_args()
     
@@ -104,7 +104,7 @@ def main():
     output_result(ovlfs_tuned_result_dir, ovlfs_tuned_res)
     output_result(ovlfs_regular_result_dir, ovlfs_reg_res) 
     plot_results([baseline_result_dir, ovlfs_tuned_result_dir, ovlfs_regular_result_dir], ['baseline', 'ovlfs_tuned', 'ovlfs_regular'])
-    unmount_filesystems(ovlfs_reg_dir, ovlfs_tuned_dir)
+    #unmount_filesystems(ovlfs_reg_dir, ovlfs_tuned_dir)
 
 if __name__ == '__main__':
     main()
