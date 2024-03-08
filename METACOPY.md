@@ -45,7 +45,7 @@ The benchmarking for chmod() operation was performed under the following conditi
 **First run of benchmarking script:**
 ![alt text](/plots/alma_linux_9/100kb_35mb_range_1st_run.png)
 **Second run of benchmarking script:**
-![alt text](/plots/alma_linux_9/100kb_35MB_range_2nd_run.png)
+![alt text](/plots/alma_linux_9/100kb_35mb_range_2nd_run.png)
 Subsequent runs of the benchmarking script with plotting produces results similar to the second run.
 Obviously, there is only marginal increase in the performance on the physical device in Alma Linux. We can observe a small speed-up on the first run (when no files from lower directore are presented in upper directory), but almost equal performance for regular and tuned setup of OverlayFS. What OvelayFS docs says about that? There is a note at the bottom of metacopy feature paragraph:
 ```
