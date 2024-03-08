@@ -16,6 +16,7 @@ To get average time comparison chart you may follow steps similar to the describ
 - [ ] **Unmounting OverlayFS**: add a key to run.py options for specifying whether OverlayFS setup should be unmounted at the end.
 - [ ] **Testing directories cleanup**: add a key to run.py options for specifying whether directories used in benchmarking should be removed from local FS.
 - [ ] **Ability to pass any other function to measure it's performance on the given filesystem setup**
+- [ ] **Script steps to deal with outliers in data**
 
 Be aware that this script launches mount/umount commands under sudo so you will have to provide your passwords at some point of script execution.
 
@@ -26,16 +27,25 @@ Be aware that this script launches mount/umount commands under sudo so you will 
 - **Multiple Benchmark Runs:** Execute a defined number of operation runs for thorough performance analysis.
 - **Benchmark Result Export:** Automatically stores benchmarking results to a specified output directory.
 
-**Requirements:**
+**Prerequisities:**
 
-Before running the script, ensure you have Python installed on your system. The script is compatible with Python 3.9 and later (I have plans to make it available for Python 2.x).
+Before running the script, ensure you have Python installed on your system. The script is compatible with Python 3.x (I have plans to make it available for Python 2.x).
 To install required packages perform the following steps:
 ```
 cd cvmfs-overlayfs
 pip install -r requirements.txt
 ```
 You can do this either for system-wide installation or for virtual environment.
-
+However, plotting uses matplotlib, thus you should have some compatible GUI backend installed on your system (it could be Tkinter or PyQT). 
+Personally, I prefer Tkinter, so I leave here an installation line
+**For Ubuntu:**
+```
+sudo apt-get install python3-tk
+```
+**For Alma Linux:**
+```
+sudo dnf install python3-tk
+```
 **Supported options:**
 ```
 Usage: run.py [options]
