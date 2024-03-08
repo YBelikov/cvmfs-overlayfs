@@ -5,6 +5,13 @@ Currently, the following features are under research:**
 To get average time comparison chart you may follow steps described in METACOPY.md or launch run.py Python scripts that perfmors test directories setup, file generation, mounting OverlayFS with different configurations, average operation time measurement per each file size available in testing directories, plotting graphs and unmounting both OverlayFS setups (the last option is a configurable one, you want to keep the setup to repeat your benchmarking).
 Be aware that this script launches mount/umount commands under sudo so you will have to provide your passwords at some point of script execution. On top of that this script doesn't perform cleanup if you won't specify --cleanup-directories=True, or -c True option.
 
+**Features:**
+- **Flexible File Size Configuration:** Set minimum and maximum file sizes to tailor the benchmarking to your specific testing needs.
+- **Custom File Count:** Specify the exact number of files to be generated for benchmarking.
+- **Configurable Directory Paths:** Define custom paths for baseline and OverlayFS directory structures.
+- **Multiple Benchmark Runs:** Execute a defined number of operation runs for thorough performance analysis.
+- **Benchmark Result Export:** Automatically stores benchmarking results to a specified output directory.
+
 **Supported options:**
 ```
 Usage: run.py [options]
