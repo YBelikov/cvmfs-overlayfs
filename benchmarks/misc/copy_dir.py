@@ -2,8 +2,11 @@
 
 import shutil
 import sys
-from log import *
+from .log import *
 
+def copy_dir(source, dest):
+    shutil.copytree(source, dest, dirs_exist_ok=True)
+    
 def main():
     if len(sys.argv) != 3:
         Logger(LogLevel.ERROR, "Provide source and destination paths")
@@ -11,7 +14,7 @@ def main():
     source = sys.argv[1]
     destination = sys.argv[2]
     try:
-        shutil.copytree(source, destination, dirs_exist_ok=True)
+        copy_dir(source, destination)
     except Exception as ex:
         Logger.log(LogLevel.ERROR, f"{ex}")
         exit(1)

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os
 from misc import list_absolute_file_paths
 from optparse import OptionParser

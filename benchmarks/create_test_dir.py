@@ -5,19 +5,15 @@ import random
 from optparse import OptionParser
 from misc.log import *
 
-def produce_dir(path, number_of_files, min_file_size, max_file_size, big_file_threshold):
+def produce_dir(path, number_of_files, min_file_size, max_file_size):
     Logger.log(LogLevel.INFO, "On dir producing")
-    # 2^30 just arbitrary huge number of bytes that could be written with randbytes without C-int overflow 
+    # 2^30 just arbitrary large number of bytes that could be written with randbytes without C-int overflow 
     buffer_size = 1048576 
     os.makedirs(path, exist_ok=True)
-    file_prefix = ""  
+    file_prefix = "seeded_file"  
     for i in range(number_of_files):
         file_size = random.randint(min_file_size, max_file_size)
         print(f"File size: {file_size}")
-        if file_size >= big_file_threshold:
-            file_prefix = "big_file"
-        else:
-            file_prefix = "regular_file"
         target_file_path = os.path.join(path, f'{file_prefix}_{i}')
         with open(target_file_path, 'wb') as target_file:
             while file_size > 0:
@@ -35,8 +31,7 @@ def main():
     parser.add_option("-n", "--number-of-files",    dest="number_of_files",     default=100,    help="the number of files to be generated in the given directory")
     parser.add_option("-l", "--min-file-size",      dest="min_file_size",       default=0,      help="minimal file size for random file contents in bytes")
     parser.add_option("-u", "--max-file-size",      dest="max_file_size",       default=102400, help="maximal file size for random file contents in bytes")
-    parser.add_option("-t", "--big-file-threshold", dest="big_file_threshold",  default=0.0,    help="threshold for the file to be considered big")
-
+ 
     (options, args) = parser.parse_args()
     if len(args) != 1:
         parser.error("Please provide the mandatory arguments")
@@ -44,13 +39,12 @@ def main():
         number_of_files    = int(options.number_of_files)
         min_file_size      = int(options.min_file_size)
         max_file_size      = int(options.max_file_size)
-        big_file_threshold = int(options.big_file_threshold)
     except ValueError:
         Logger.log(LogLevel.ERROR, "Cannot parse numerical options and/or parameters")
         exit(1)
 
     target_dir_path = args[0]
-    produce_dir(target_dir_path, number_of_files, min_file_size, max_file_size, big_file_threshold)
+    produce_dir(target_dir_path, number_of_files, min_file_size, max_file_size)
 
 if __name__ == '__main__':
     main()

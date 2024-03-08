@@ -32,3 +32,6 @@ python ~/Development/cvmfs-overlayfs/benchmarks/perform_benchmarks.py --path-to-
 ===========================PLOTTING (ACCEPT PATHS TO DIRS WITH BENCHMARKING RESULTS)=========================================================
 
 python ~/Development/cvmfs-overlayfs/benchmarks/plot_comparison.py --path-to-base-res="~/no_ovlfs_dir" --path-to-tuned-ovfs-res="~/ovlfs_features_dir/" --path-to-regular-ovfs-res="~/ovlfs_regular_dir/"
+
+
+python run.py --min-file-size=100000 --max-file-size=35000000 --number-of-files=400 --runs_num=1000
