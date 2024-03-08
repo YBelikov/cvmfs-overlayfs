@@ -2,6 +2,7 @@
 Currently, the following features are under research:**
 - [Metadata copy only (metacopy=on feature)](https://github.com/YBelikov/cvmfs-overlayfs/blob/main/METACOPY.md)
 - Zero-copy directory renames
+
 To get average time comparison chart you may follow steps described in METACOPY.md or launch run.py Python scripts that perfmors test directories setup, file generation, mounting OverlayFS with different configurations, average operation time measurement per each file size available in testing directories, plotting graphs and unmounting both OverlayFS setups (the last option is a configurable one, you want to keep the setup to repeat your benchmarking).
 Be aware that this script launches mount/umount commands under sudo so you will have to provide your passwords at some point of script execution. On top of that this script doesn't perform cleanup if you won't specify --cleanup-directories=True, or -c True option.
 
@@ -11,6 +12,17 @@ Be aware that this script launches mount/umount commands under sudo so you will 
 - **Configurable Directory Paths:** Define custom paths for baseline and OverlayFS directory structures.
 - **Multiple Benchmark Runs:** Execute a defined number of operation runs for thorough performance analysis.
 - **Benchmark Result Export:** Automatically stores benchmarking results to a specified output directory.
+
+
+**Requirements:**
+
+Before running the script, ensure you have Python installed on your system. The script is compatible with Python 3.9 and later (I have plans to make it available for Python 2.x).
+To install required packages perform the following steps:
+```
+cd cvmfs-overlayfs
+pip install -r requirements.txt
+```
+You can do this either for system-wide installation or for virtual environment.
 
 **Supported options:**
 ```
