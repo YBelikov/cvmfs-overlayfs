@@ -1,3 +1,2 @@
 matplotlib
 scienceplots
-python-tkinter

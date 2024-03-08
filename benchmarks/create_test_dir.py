@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import sys
 import random
 from optparse import OptionParser
 from misc.log import *
@@ -17,11 +18,18 @@ def produce_dir(path, number_of_files, min_file_size, max_file_size):
         with open(target_file_path, 'wb') as target_file:
             while file_size > 0:
                 if file_size > buffer_size:
-                    target_file.write(random.randbytes(buffer_size))
+                    write_to_file(target_file, buffer_size)
                     file_size -= buffer_size
                 else:
-                    target_file.write(random.randbytes(file_size))
+                    write_to_file(target_file, file_size)
                     file_size = 0
+
+def write_to_file(file_stream, output_size):
+    if sys.version_info.major > 3 and sys.version_info.minor < 9:
+        file_stream.write(random.getrandbits(8 * output_size).to_bytes(output_size))
+    else:
+        file_stream.write(random.randbytes(output_size))
+
 def main():
     #command line parameter parser setup
     usage = "usage: %prog [options] <destination path>\n\
