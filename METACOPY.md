@@ -28,19 +28,30 @@ The benchmarking for chmod() operation was performed under the following conditi
 - OS: Ubuntu 22.04 (Shamrock Pampas Cat)
 - Kernel: 5.14.0-362.18.1.el9_3.x86_64
 - Hardware memory type: SSD (~120 GB of storage available)
-- RAM: 8 GB
+- RAM: 8 GB of allocated host machine memory
 - Processor: Intel i7-10750H @ 5.000GHz (allocated 2 cores of the host OS)
 
-**Setup 2 (Virtual machine):**
+**Setup 3 (Virtual machine):**
 - Host OS: Windows 10
 - OS: Alma Linux 8
 - Kernel: 5.14.0-362.18.1.el9_3.x86_64
 - Hardware memory type: SSD (~120 GB of storage available)
-- RAM: 8 GB
+- RAM: 8 GB of allocated host machine memory 
 - Processor: Intel i7-10750H @ 5.000GHz (allocated 2 cores of the host OS)
 
 <h2>Results</h2>
-chmod() results for setup 1 (Alma Linux 9)
+<h3>chmod() results for setup 1 (Alma Linux 9):</h3>
 
+**First run of benchmarking script:**
+![alt text](/plots/alma_linux_9/100kb_35mb_range_1st_run.png)
 **Second run of benchmarking script:**
-![alt text](https://github.com/YBelikov/cvmfs-overlayfs/blob/main/plots/alma_linux_9/100kb_35MB_range_2nd_run.png)
+![alt text](/plots/alma_linux_9/100kb_35MB_range_2nd_run.png)
+Subsequent runs of the benchmarking script with plotting produces results similar to the second run.
+Obviously, there is only marginal increase in the performance on the physical device in Alma Linux. We can observe a small speed-up on the first run (when no files from lower directore are presented in upper directory), but almost equal performance for regular and tuned setup of OverlayFS. What OvelayFS docs says about that? There is a note at the bottom of metacopy feature paragraph:
+```
+Once the copy_up is complete, the overlay filesystem simply provides direct access to the newly created file
+in the upper filesystem - future operations on the file are barely noticed by the overlay filesystem
+(though an operation on the name of the file such as rename or unlink will of course be noticed and handled)
+```
+This note is quite obscure but seems like this is intended behavior in this case. Only first run gets any speed-up.
+Generally, I would not say that turning this feature on brings a lot of advantages but enabling it is very cheap thus we can safely deploy it to the main software.
