@@ -2,7 +2,7 @@
 
 <h2>Benchmarking setup:</h2>
 To measure and compare impact made by this feature I decided to focus my investigation on the average execution time of syscalls affecting files' metadata. 
-In particular we were interested in two most frequently performed operations on typical CVMFS repository: chmod and chown. 
+In particular we were interested in two most frequently performed operations on typical CVMFS repository: chmod() and chown(). 
 Alma Linux 9 was selected as the main testing and development OS on physical device as Alma distribution is a principal one in CERN.
 
 The benchmarking for chmod() operation was performed under the following conditions:
@@ -47,11 +47,12 @@ The benchmarking for chmod() operation was performed under the following conditi
 **Second run of benchmarking script:**
 ![alt text](/plots/alma_linux_9/100kb_35mb_range_2nd_run.png)
 Subsequent runs of the benchmarking script with plotting produces results similar to the second run.
-Obviously, there is only marginal increase in the performance on the physical device in Alma Linux. We can observe a small speed-up on the first run (when no files from lower directore are presented in upper directory), but almost equal performance for regular and tuned setup of OverlayFS. What OvelayFS docs says about that? There is a note at the bottom of metacopy feature paragraph:
+Obviously, there is only marginal increase in the performance on the physical device in Alma Linux. We can observe a small speed-up on the first run (when no files from lower directore are presented in upper directory), but almost equal performance for regular and tuned setup of OverlayFS. 
+What [OverlayFS docs](https://docs.kernel.org/filesystems/overlayfs.html) says about that? There is a note at the bottom of metacopy feature paragraph:
 ```
 Once the copy_up is complete, the overlay filesystem simply provides direct access to the newly created file
 in the upper filesystem - future operations on the file are barely noticed by the overlay filesystem
 (though an operation on the name of the file such as rename or unlink will of course be noticed and handled)
 ```
 This note is quite obscure but seems like this is intended behavior in this case. Only first run gets any speed-up.
-Generally, I would not say that turning this feature on brings a lot of advantages but enabling it is very cheap thus we can safely deploy it to the main software.
+Generally, I would not say that turning this feature on brings a lot of advantages but enabling it is very cheap and should not make experience unpleasant on the client's side, thus we can safely deploy it to the main software.
