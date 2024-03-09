@@ -25,8 +25,8 @@ def produce_dir(path, number_of_files, min_file_size, max_file_size):
                     file_size = 0
 
 def write_to_file(file_stream, output_size):
-    if sys.version_info.major > 3 and sys.version_info.minor < 9:
-        file_stream.write(random.getrandbits(8 * output_size).to_bytes(output_size))
+    if sys.version_info.major >= 3 and sys.version_info.minor < 9:
+        file_stream.write(random.getrandbits(8 * output_size).to_bytes(output_size, 'little'))
     else:
         file_stream.write(random.randbytes(output_size))
 
