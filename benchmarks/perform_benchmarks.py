@@ -2,7 +2,7 @@
 
 import os
 import matplotlib.pyplot as plt
-from time import perf_counter
+from ops_to_benchmark import chmod
 from optparse import OptionParser
 from collections import defaultdict
 from misc import Logger
@@ -15,29 +15,8 @@ class OperationBenchmarkResult:
         self.sizes = sizes
         self.operations_times = operations_times
 
-def benchmark_chmod(file_path):
-    start_time = perf_counter()
-    os.chmod(file_path, 0o777)
-    end_time = perf_counter()
-    os.chmod(file_path, 0o644)
-
-    # To get time in milliseconds
-    return (end_time - start_time) * 1000
-
-def benchmark_write(file_path):
-    from random import randbytes
-    random_bytes_to_write = 10
-    with open(file_path, 'r+b') as f:
-        start = perf_counter()
-        f.write(randbytes(random_bytes_to_write))       
-        end = perf_counter()
-        f.flush()
-
-    # To get time in milliseconds
-    return (end - start) * 1000
-
 # Runs command for each file in a given FS object: 
-def benchmark_avg_chmod(file_system_object_path, number_of_runs):
+def benchmark_avg(file_system_object_path, number_of_runs, benchmark_func):
     sizes = list()
     avg_times = list()
     sub_fs_objects = list_absolute_file_paths(file_system_object_path)
@@ -51,19 +30,19 @@ def benchmark_avg_chmod(file_system_object_path, number_of_runs):
             times_of_runs = 0.0
             for run_idx in range(number_of_runs):
                 for file_path in absolute_file_paths:
-                    times_of_runs += benchmark_chmod(file_path)
+                    times_of_runs += benchmark_func(file_path) #benchmark_chmod(file_path)
             avg_times.append(times_of_runs / number_of_runs)
     else:
         sizes_to_times = defaultdict(int)
         for run_idx in range(number_of_runs):
             for file in sub_fs_objects:
                 file_size = os.stat(file).st_size
-                sizes_to_times[file_size] += benchmark_chmod(file)
+                sizes_to_times[file_size] += benchmark_func(file) #benchmark_chmod(file)
         for time_of_run in sizes_to_times.values():
             avg_times.append(time_of_run / number_of_runs)
         for size in sizes_to_times.keys():
             sizes.append(size)
-    return OperationBenchmarkResult('chmod', sizes, avg_times)
+    return OperationBenchmarkResult(benchmark_func.__name__, sizes, avg_times)
 
 def output_result(path_to_result, benchmark_result):
     full_file_path = os.path.join(path_to_result, f'{benchmark_result.name}.txt')
@@ -81,7 +60,6 @@ def output_result(path_to_result, benchmark_result):
     with open(full_file_path, 'w') as f:
         for idx in range(len(x)):
             f.write(f'{x[idx]} {y[idx]}\n')
-
 
 def main():
     usage = 'usage: <target path> [options]\n\
@@ -104,7 +82,7 @@ def main():
     Logger.log(LogLevel.DEBUG, f'Target: {path_to_result}')
     if not os.path.isdir(path_to_target_dir):
         Logger.log(LogLevel.INFO,"Provide a path to a directory!")
-    benchmark_result = benchmark_avg_chmod(path_to_target_dir, number_of_runs)
+    benchmark_result = benchmark_avg(path_to_target_dir, number_of_runs, chmod)
     if os.path.exists(path_to_target_dir):
         Logger.log(LogLevel.INFO, f'Making dir: {path_to_result}')
         os.makedirs(path_to_result, exist_ok=True)

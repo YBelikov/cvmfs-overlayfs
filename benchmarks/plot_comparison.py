@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 
 def plot_results(paths, legend):
     plt.style.use(['science', 'no-latex', 'grid'])
+    plt.figure(1)
     for path in paths:
         files = list_absolute_file_paths(path)
         for file in files:
@@ -17,10 +18,21 @@ def plot_results(paths, legend):
                 x = [float(line.split()[0]) for line in lines]
                 y = [float(line.split()[1]) for line in lines]
             plt.plot(x ,y)
-    plt.legend(legend, loc='best')
     plt.xlabel('File size in bytes')  
-    plt.ylabel('Average operation time in ms')            
+    plt.ylabel('Average operation time in ms') 
+    plt.title('Chmod')           
+    plt.figure(2)
+    import random
+    x = [random.randrange(10, 40, 1) for _ in range(30)]
+    y = [random.randrange(10, 40, 1) for _ in range(30)]
+    plt.plot(x, y)
+    plt.legend('base', loc='best')
+    plt.xlabel('File size in bytes')  
+    plt.ylabel('Average operation time in ms') 
+    plt.title('Rand')           
     plt.show()
+
+
 
 def main():
     usage = 'usage: <target path> [options]\n\
