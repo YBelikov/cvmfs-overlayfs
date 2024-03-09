@@ -29,15 +29,15 @@ The benchmarking for chmod() operation was performed under the following conditi
 - Kernel: 5.14.0-362.18.1.el9_3.x86_64
 - Hardware memory type: SSD (~120 GB of storage available)
 - RAM: 8 GB of allocated host machine memory
-- Processor: Intel i7-10750H @ 5.000GHz (allocated 2 cores of the host OS)
+- Processor: Intel i7-10750H (1) @ 2.592GHz 
 
 **Setup 3 (Virtual machine):**
 - Host OS: Windows 10
-- OS: Alma Linux 8
-- Kernel: 5.14.0-362.18.1.el9_3.x86_64
+- OS: Alma Linux 8.9 ((Midnight Oncilla)
+- Kernel: 4.18.0-513.5.1.el8_9.x86_64 
 - Hardware memory type: SSD (~120 GB of storage available)
 - RAM: 8 GB of allocated host machine memory 
-- Processor: Intel i7-10750H @ 5.000GHz (allocated 2 cores of the host OS)
+- Processor: Intel i7-10750H (1) @ 2.592GHz 
 
 <h2>Results</h2>
 <h3>chmod() results for setup 1 (Alma Linux 9):</h3>
