@@ -44,7 +44,7 @@ sudo apt-get install python3-tk
 ```
 **For Alma Linux:**
 ```
-sudo dnf install python3-tk
+sudo dnf install python3-tkinter
 ```
 **Supported options:**
 ```
