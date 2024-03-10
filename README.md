@@ -51,7 +51,7 @@ sudo dnf install python3-tk
 Usage: run.py [options]
 
 Options:
- --min-file-size          Minimum file size for random file contents in bytes (default: 0).
+--min-file-size          Minimum file size for random file contents in bytes (default: 0).
 --max-file-size          Maximum file size for random file contents in bytes (default: 10000000).
 --number-of-files        Number of files to generate (default: 100).
 --base-dir               Path to the regular directory for baseline benchmark (default: ~/base_dir).
