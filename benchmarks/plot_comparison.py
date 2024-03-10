@@ -6,24 +6,22 @@ from optparse import OptionParser
 import scienceplots
 import matplotlib.pyplot as plt
 
-def plot_results(paths, legend):
+def plot_results(path, legend):
     plt.style.use(['science', 'no-latex', 'grid'])
-    for path in paths:
-        files = list_absolute_file_paths(path)
-        for file in files:
-            with open(file, 'r') as f:
-                print(file)
-                lines = f.readlines()
-                x = [float(line.split()[0]) for line in lines]
-                y = [float(line.split()[1]) for line in lines]
-            plt.plot(x ,y)
-    plt.legend(legend, loc='best')
-    plt.xlabel('File size in bytes')  
-    plt.ylabel('Average operation time in ms') 
-    plt.title('Operation benchmark results')           
+    for fs_object in list_absolute_file_paths(path):
+        if os.path.isdir(fs_object):
+            plt.figure()
+            for file in list_absolute_file_paths(fs_object):
+                with open(file, 'r') as f:
+                    lines = f.readlines()
+                    x = [float(line.split()[0]) for line in lines]
+                    y = [float(line.split()[1]) for line in lines]
+                    plt.plot(x, y)
+            plt.legend(legend, loc='best')
+            plt.xlabel('File size in bytes')  
+            plt.ylabel('Average operation time in ms') 
+            plt.title(f'{os.path.basename(fs_object)} benchmark results')                     
     plt.show()
-
-
 
 def main():
     usage = 'usage: <target path> [options]\n\

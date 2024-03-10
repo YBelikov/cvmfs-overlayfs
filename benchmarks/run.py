@@ -5,8 +5,7 @@
 # Definetely, anyone can use scripts from this repo as standalone without running this script
 
 import os
-import inspect
-from ops_to_benchmark import chmod
+from ops_to_benchmark import chmod, read
 from optparse import OptionParser
 from misc.log import *
 from create_test_dir import produce_dir
@@ -14,22 +13,15 @@ from misc.copy_dir import copy_dir
 from misc.cleanup_dir import remove_dir
 from misc.utils import system
 from plot_comparison import plot_results
-from perform_benchmarks import benchmark_avg
-from perform_benchmarks import OperationBenchmarkResult
-from perform_benchmarks import output_result
+from perform_benchmarks import benchmark_avg, output_result
 
 OVLFS_LOWER_DIR='lower'
 OVLFS_UPPER_DIR='upper'
 OVLFS_MERGE_DIR='merge'
 OVLFS_WORK_DIR='work'
-BASE_BENCHMARK_RESULT_DIR='base_dir_results'
-TUNED_OVLFS_RESULT_DIR='tuned_ovlfs_dir_results'
-REGULAR_OVLFS_RESULT_DIR='regular_ovlfs_dir_results'
-
-class BenchmarkingContext:
-    def __init__(self):
-        pass
-
+BASELINE_RESULT_FILE_NAME='baseline'
+TUNED_OVLFS_RESULT_FILE_NAME='tuned'
+REGULAR_OVLFS_RESULT_FILE_NAME='regular'
 
 def seed_test_dirs(min_file_size, max_file_size, files_num, base_dir, ovlfs_reg_dir, ovlfs_tuned_dir):
     os.makedirs(base_dir, exist_ok=True)
@@ -59,18 +51,17 @@ def unmount_filesystems(ovlfs_reg_dir, ovlfs_tuned_dir):
     system(f'sudo umount {os.path.join(ovlfs_tuned_dir, OVLFS_MERGE_DIR)}')
 
 def run_benchmark(target_dir, runs_num, benchmark_func):
+    Logger.log(LogLevel.INFO, f'Running benchmark on {target_dir} for {benchmark_func.__name__}')
     return benchmark_avg(target_dir, runs_num, benchmark_func)
 
 def create_output_dirs(output_path):
     os.makedirs(output_path, exist_ok=True)
-    os.makedirs(os.path.join(output_path, BASE_BENCHMARK_RESULT_DIR), exist_ok=True)
-    os.makedirs(os.path.join(output_path, TUNED_OVLFS_RESULT_DIR), exist_ok=True)
-    os.makedirs(os.path.join(output_path, REGULAR_OVLFS_RESULT_DIR), exist_ok=True)
 
 def delete_seeded_files(baseline_path, tuned_ovlfs_path, regular_ovlfs_path):
-    remove_dir(baseline_path)
-    remove_dir(tuned_ovlfs_path)
-    remove_dir(regular_ovlfs_path)
+    Logger.log(LogLevel.INFO, 'Removing seeded directories')
+    system(f'sudo rm -rf {baseline_path}')
+    system(f'sudo rm -rf {tuned_ovlfs_path}')
+    system(f'sudo rm -rf {regular_ovlfs_path}')
 
 def main():
     usage = 'usage: <target path> [options]\n\
@@ -107,6 +98,7 @@ def main():
         print('Cannot parse numerical options and/or parameters')
         exit(1)
     
+
     if not unmount_ovlfs and delete_files:
         Logger.log(LogLevel.ERROR, 'You provided conflicting options for unmounting and deleting data. You have to unmount overlayfs before cleanup')
         exit(1)
@@ -132,7 +124,7 @@ def main():
         mount_filesystems(ovlfs_reg_dir, ovlfs_tuned_dir)    
         create_output_dirs(output_path)
 
-    benchmark_functions = [chmod]
+    benchmark_functions = [chmod, read]
 
     base_dir_res = list()
     ovlfs_tuned_res = list()
@@ -142,17 +134,14 @@ def main():
         ovlfs_tuned_res.append(run_benchmark(os.path.join(ovlfs_tuned_dir, OVLFS_MERGE_DIR), runs_num, func))
         ovlfs_reg_res.append(run_benchmark(os.path.join(ovlfs_reg_dir, OVLFS_MERGE_DIR), runs_num, func))
 
-    baseline_result_dir = os.path.join(output_path, BASE_BENCHMARK_RESULT_DIR)
-    ovlfs_tuned_result_dir = os.path.join(output_path, TUNED_OVLFS_RESULT_DIR)
-    ovlfs_regular_result_dir = os.path.join(output_path, REGULAR_OVLFS_RESULT_DIR)
     for res in base_dir_res:
-        output_result(baseline_result_dir, res)
-    for res in ovlfs_tuned_res:
-        output_result(ovlfs_tuned_result_dir, res)
+        output_result(output_path, 'baseline', res)
     for res in ovlfs_reg_res:    
-        output_result(ovlfs_regular_result_dir, res) 
-
-    plot_results([baseline_result_dir, ovlfs_tuned_result_dir, ovlfs_regular_result_dir], ['baseline', 'ovlfs_tuned', 'ovlfs_regular'])
+        output_result(output_path, 'regular', res) 
+    for res in ovlfs_tuned_res:
+        output_result(output_path, 'tuned', res)
+    
+    plot_results(output_path, ['baseline', 'ovlfs_regular', 'ovlfs_tuned'])
     
     if unmount_ovlfs:
         unmount_filesystems(ovlfs_reg_dir, ovlfs_tuned_dir)

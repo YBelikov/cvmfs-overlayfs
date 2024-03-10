@@ -9,8 +9,12 @@ def chmod(file):
     # To get time in milliseconds
     return (end_time - start_time) * 1000
 
-def chown(file):
-    pass
+def read(file):
+    with open(file, 'rb') as f:
+        start_time = perf_counter()
+        f.read(10)
+        end_time = perf_counter()
+    return (end_time - start_time) * 1000
 
 if __name__ == '__main__':
    chmod('~/test')

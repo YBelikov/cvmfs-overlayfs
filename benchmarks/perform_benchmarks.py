@@ -44,8 +44,10 @@ def benchmark_avg(file_system_object_path, number_of_runs, benchmark_func):
             sizes.append(size)
     return OperationBenchmarkResult(benchmark_func.__name__, sizes, avg_times)
 
-def output_result(path_to_result, benchmark_result):
-    full_file_path = os.path.join(path_to_result, f'{benchmark_result.name}.txt')
+def output_result(path_to_result, type, benchmark_result):
+    path_to_command_results = os.path.join(path_to_result, benchmark_result.name)
+    os.makedirs(path_to_command_results, exist_ok=True)
+    full_file_path = os.path.join(path_to_command_results, f'{type}.txt')
     x = benchmark_result.sizes
     y = benchmark_result.operations_times
     
