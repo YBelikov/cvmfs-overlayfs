@@ -7,16 +7,17 @@ To get average time comparison chart you may follow steps similar to the describ
 1. **Testing directories setup:** on this step the script creates regular directory for baseline measurements, and two separate directories to spawn OverlayFS directory structure (readonly lower layer directory, read-write upper layer directory, merge directory and work directory (scratch area for internal work of OverlayFS)) for mounting regular and tuned (with additional features enabled) filesystems respectively.   
 2. **File generation:** generates specified number of files in the specified size range (in bytes, at least for now) in baseline directory and copies these files to lower layer directories for each OverlayFS setup
 3. **Mounts OverlayFS with different configurations in the created mountpoints** (regular and tuned), requires **sudo** that's why the script may ask your password
-4. **Average operation time measurement** per each file of a certain size available in testing directories: for now you should manually change what you are measuring in [perform_benchmark.py](https://github.com/YBelikov/cvmfs-overlayfs/blob/main/benchmarks/perform_benchmarks.py). I have plans to make it more flexible.
-5. **Saving benchmarking results as text files**: corresponding benchmarking results that represent average ops execution time per a file in each testing directory (baseline directory, regular OverlayFS merge one, and merge directory in tuned OverlayFS) are written to the specified by script's options directory in the following format: ```x (file size) y (average time)``` per line. Benchmarking result per each directory is stored in the separate subdirectory of the output one. 
+4. **Average operation time measurement** per each file of a certain size available in testing directories: please, define functions you want to benchmark in [ops_to_benchmark.py](https://github.com/YBelikov/cvmfs-overlayfs/blob/improvements/benchmarks/ops_to_benchmark.py)
+5. **Saving benchmarking results as text files**: corresponding benchmarking results that represent average ops execution time per a file in each testing directory (baseline directory, regular OverlayFS merge one, and merge directory in tuned OverlayFS) are written to the specified by script's options directory in the following format: ```file_size average_time_in_ms``` per line. Benchmarking result per each directory is stored in the separate subdirectory of the output one. 
 6. **Plotting comparison graphs**: the script calls helper function from plot_comparison.py to draw a comparison plot per each operation
 
 <h3>TODO:</h3>
 
-- [ ] **Unmounting OverlayFS**: add a key to run.py options for specifying whether OverlayFS setup should be unmounted at the end.
-- [ ] **Testing directories cleanup**: add a key to run.py options for specifying whether directories used in benchmarking should be removed from local FS.
-- [ ] **Ability to pass any other function to measure it's performance on the given filesystem setup**
+- [x] **Unmounting OverlayFS**: add a key to run.py options for specifying whether OverlayFS setup should be unmounted at the end.
+- [x] **Testing directories cleanup**: add a key to run.py options for specifying whether directories used in benchmarking should be removed from local FS.
+- [x] **Ability to pass any other function to measure it's performance on the given filesystem setup**
 - [ ] **Script steps to deal with outliers in data**
+- [ ] **Replace os API usage with Pathlib?**
 
 Be aware that this script launches mount/umount commands under sudo so you will have to provide your passwords at some point of script execution.
 
@@ -29,7 +30,7 @@ Be aware that this script launches mount/umount commands under sudo so you will 
 
 **Prerequisities:**
 
-Before running the script, ensure you have Python installed on your system. The script is compatible with Python 3.x (I have plans to make it available for Python 2.x).
+Before running the script, ensure you have Python installed on your system. The script is compatible with Python 3.x.
 To install required packages perform the following steps:
 ```
 cd cvmfs-overlayfs
@@ -37,7 +38,8 @@ pip install -r requirements.txt
 ```
 You can do this either for system-wide installation or for virtual environment.
 However, plotting uses matplotlib, thus you should have some compatible GUI backend installed on your system (it could be Tkinter or PyQT). 
-Personally, I prefer Tkinter, so I leave here an installation line
+Personally, I prefer Tkinter, so I leave here an installation line:
+
 **For Ubuntu:**
 ```
 sudo apt-get install python3-tk
@@ -51,15 +53,17 @@ sudo dnf install python3-tkinter
 Usage: run.py [options]
 
 Options:
-  -h, --help                   Show this help message and exit.
-  -l, --min-file-size          Min file size for random file contents in bytes (default: 0).
-  -u, --max-file-size          Max file size for random file contents in bytes (default: 10000000).
-  -n, --number-of-files        Number of files to generate (default: 100).
-  -b, --base-dir               Path to the regular directory for baseline benchmark (default: ~/base_dir).
-  -r, --overlay-fs-regular-dir Path to the directory where overlay FS structure without additional mount params will be spanned (default: ~/ovlfs_regular).
-  -f, --overlay-fs-tuned-dir   Path to directory where overlay FS structure with additional params will be spanned (default: ~/ovlfs_tuned).
-  -t, --runs-num               Number of operation runs during benchmarking (default: 100).
-  -o, --output-path            Path where files with benchmarking results are stored (default: ~/ovlfs_benchmark_output). 
+--min-file-size          Minimum file size for random file contents in bytes (default: 0).
+--max-file-size          Maximum file size for random file contents in bytes (default: 10000000).
+--number-of-files        Number of files to generate (default: 100).
+--base-dir               Path to the regular directory for baseline benchmark (default: ~/base_dir).
+--overlay-fs-regular-dir Path to the directory where overlay FS structure without additional mount params will be spanned (default: ~/ovlfs_regular).
+--overlay-fs-tuned-dir   Path to the directory where overlay FS structure with additional params will be spanned (default: ~/ovlfs_tuned).
+--runs_num               Number of operation runs during benchmarking (default: 100).
+--output-path            Path where files with benchmarking results are stored (default: ~/ovlfs_benchmark_output).
+--unmount-ovlfs          Specifies the need to unmount overlay filesystems after benchmarking (default: False).
+--delete-files           Specifies the need to delete seeded files and directories at the end of run (default: False).
+--relaunch-benchmark     Specifies the need to relaunch benchmark using provided directories (default: False).
 ```
 **Examples:**
 
