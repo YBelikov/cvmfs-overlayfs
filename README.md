@@ -38,7 +38,8 @@ pip install -r requirements.txt
 ```
 You can do this either for system-wide installation or for virtual environment.
 However, plotting uses matplotlib, thus you should have some compatible GUI backend installed on your system (it could be Tkinter or PyQT). 
-Personally, I prefer Tkinter, so I leave here an installation line
+Personally, I prefer Tkinter, so I leave here an installation line:
+
 **For Ubuntu:**
 ```
 sudo apt-get install python3-tk
@@ -60,7 +61,7 @@ Options:
 --overlay-fs-tuned-dir   Path to the directory where overlay FS structure with additional params will be spanned (default: ~/ovlfs_tuned).
 --runs_num               Number of operation runs during benchmarking (default: 100).
 --output-path            Path where files with benchmarking results are stored (default: ~/ovlfs_benchmark_output).
---unmount-ovlfs          Specifies the need to unmount overlay filesystems (default: False).
+--unmount-ovlfs          Specifies the need to unmount overlay filesystems after benchmarking (default: False).
 --delete-files           Specifies the need to delete seeded files and directories at the end of run (default: False).
 --relaunch-benchmark     Specifies the need to relaunch benchmark using provided directories (default: False).
 ```
