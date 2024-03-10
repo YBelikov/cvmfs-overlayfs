@@ -17,6 +17,7 @@ To get average time comparison chart you may follow steps similar to the describ
 - [x] **Testing directories cleanup**: add a key to run.py options for specifying whether directories used in benchmarking should be removed from local FS.
 - [x] **Ability to pass any other function to measure it's performance on the given filesystem setup**
 - [ ] **Script steps to deal with outliers in data**
+- [ ] **Replace os API usage with Pathlib?**
 
 Be aware that this script launches mount/umount commands under sudo so you will have to provide your passwords at some point of script execution.
 
