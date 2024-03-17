@@ -15,6 +15,13 @@ class OperationBenchmarkResult:
         self.sizes = sizes
         self.operations_times = operations_times
 
+def calc_dir_size(dir):
+    total_size = 0
+    directory_contents = list_absolute_file_paths(dir)
+    for file in directory_contents:
+        total_size += os.stat(file).st_size
+    return total_size
+
 # Runs command for each file in a given FS object: 
 def benchmark_avg(file_system_object_path, number_of_runs, benchmark_func):
     sizes = list()
@@ -25,19 +32,19 @@ def benchmark_avg(file_system_object_path, number_of_runs, benchmark_func):
         exit(1)
     if os.path.isdir(sub_fs_objects[0]):
         for subdir in sub_fs_objects:
-            absolute_file_paths = list_absolute_file_paths(subdir)
-            sizes.append(os.stat(absolute_file_paths[0]).st_size)
+            #absolute_file_paths = list_absolute_file_paths(subdir)
+            sizes.append(calc_dir_size(subdir)) 
             times_of_runs = 0.0
             for run_idx in range(number_of_runs):
-                for file_path in absolute_file_paths:
-                    times_of_runs += benchmark_func(file_path) #benchmark_chmod(file_path)
+                #for file_path in absolute_file_paths:
+                    times_of_runs += benchmark_func(subdir)
             avg_times.append(times_of_runs / number_of_runs)
     else:
         sizes_to_times = defaultdict(int)
         for run_idx in range(number_of_runs):
             for file in sub_fs_objects:
                 file_size = os.stat(file).st_size
-                sizes_to_times[file_size] += benchmark_func(file) #benchmark_chmod(file)
+                sizes_to_times[file_size] += benchmark_func(file)
         for time_of_run in sizes_to_times.values():
             avg_times.append(time_of_run / number_of_runs)
         for size in sizes_to_times.keys():

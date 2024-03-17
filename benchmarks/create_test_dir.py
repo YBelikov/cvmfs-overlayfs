@@ -7,7 +7,7 @@ from optparse import OptionParser
 from misc.log import *
 
 def produce_dir(path, number_of_files, min_file_size, max_file_size):
-    Logger.log(LogLevel.INFO, "On dir producing")
+    Logger.log(LogLevel.INFO, f'Seeding directory at path: {path}')
     # 2^30 just arbitrary large number of bytes that could be written with randbytes without C-int overflow 
     buffer_size = 1048576 
     os.makedirs(path, exist_ok=True)
