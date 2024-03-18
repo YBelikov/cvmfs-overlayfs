@@ -12,8 +12,10 @@ def produce_dir(path, number_of_files, min_file_size, max_file_size):
     buffer_size = 1048576 
     os.makedirs(path, exist_ok=True)
     file_prefix = "seeded_file"  
+    total_file_size = 0
     for i in range(number_of_files):
         file_size = random.randint(min_file_size, max_file_size)
+        total_file_size += file_size
         target_file_path = os.path.join(path, f'{file_prefix}_{i}')
         with open(target_file_path, 'wb') as target_file:
             while file_size > 0:
@@ -23,6 +25,7 @@ def produce_dir(path, number_of_files, min_file_size, max_file_size):
                 else:
                     write_to_file(target_file, file_size)
                     file_size = 0
+    return total_file_size
 
 def write_to_file(file_stream, output_size):
     if sys.version_info.major >= 3 and sys.version_info.minor < 9:
