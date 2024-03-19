@@ -6,28 +6,43 @@ import random
 from optparse import OptionParser
 from misc.log import *
 
+BUFFER_SIZE=1048576
+RANDOM_FILE_PREFIX="seeded_file"
+
 def produce_dir(path, number_of_files, min_file_size, max_file_size):
     Logger.log(LogLevel.INFO, f'Seeding directory at path: {path}')
-    # 2^30 just arbitrary large number of bytes that could be written with randbytes without C-int overflow 
-    buffer_size = 1048576 
     os.makedirs(path, exist_ok=True)
-    file_prefix = "seeded_file"  
     total_file_size = 0
     for i in range(number_of_files):
-        file_size = random.randint(min_file_size, max_file_size)
-        total_file_size += file_size
-        target_file_path = os.path.join(path, f'{file_prefix}_{i}')
-        with open(target_file_path, 'wb') as target_file:
-            while file_size > 0:
-                if file_size > buffer_size:
-                    write_to_file(target_file, buffer_size)
-                    file_size -= buffer_size
-                else:
-                    write_to_file(target_file, file_size)
-                    file_size = 0
+        target_file_path = os.path.join(path, f'{RANDOM_FILE_PREFIX}_{i}')
+        total_file_size += create_random_file(target_file_path=target_file_path, min_size=min_file_size, max_size=max_file_size)
     return total_file_size
 
-def write_to_file(file_stream, output_size):
+def produce_dir(path, max_directory_size):
+    Logger.log(LogLevel.INFO, f'Seeding directory at path: {path}')
+    os.makedirs(path, exist_ok=True)
+    total_file_size = 0
+    file_index = 1
+    while total_file_size < max_directory_size:
+        target_file_path = os.path.join(path, f'{RANDOM_FILE_PREFIX}_{file_index}')
+        total_file_size += create_random_file(target_file_path=target_file_path, min_size=0, max_size=max_directory_size)
+        file_index += 1
+    return total_file_size
+
+def create_random_file(target_file_path, min_size, max_size):
+    file_size = random.randint(min_size, max_size)
+    bytes_remaining = file_size
+    with open(target_file_path, 'wb') as target_file:
+        while bytes_remaining > 0:
+            if bytes_remaining > BUFFER_SIZE:
+                write_contents(target_file, BUFFER_SIZE)
+                bytes_remaining -= BUFFER_SIZE
+            else:
+                write_contents(target_file, file_size)
+                bytes_remaining = 0
+    return file_size
+
+def write_contents(file_stream, output_size):
     if sys.version_info.major >= 3 and sys.version_info.minor < 9:
         file_stream.write(random.getrandbits(8 * output_size).to_bytes(output_size, 'little'))
     else:

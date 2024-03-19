@@ -38,7 +38,7 @@ def benchmark_avg(file_system_object_path, number_of_runs, benchmark_func):
             for run_idx in range(number_of_runs):
                 #for file_path in absolute_file_paths:
                     times_of_runs += benchmark_func(subdir)
-            avg_times.append(times_of_runs / number_of_runs)
+            avg_times.append(times_of_runs)
     else:
         sizes_to_times = defaultdict(int)
         for run_idx in range(number_of_runs):
@@ -46,7 +46,7 @@ def benchmark_avg(file_system_object_path, number_of_runs, benchmark_func):
                 file_size = os.stat(file).st_size
                 sizes_to_times[file_size] += benchmark_func(file)
         for time_of_run in sizes_to_times.values():
-            avg_times.append(time_of_run / number_of_runs)
+            avg_times.append(time_of_run)
         for size in sizes_to_times.keys():
             sizes.append(size)
     return OperationBenchmarkResult(benchmark_func.__name__, sizes, avg_times)

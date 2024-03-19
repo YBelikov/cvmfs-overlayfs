@@ -5,7 +5,7 @@
 # Definetely, anyone can use scripts from this repo as standalone without running this script
 
 import os
-from ops_to_benchmark import chmod, read, rename_directory
+from ops_to_benchmark import chmod, read, rename_directory, move_directory
 from optparse import OptionParser
 from misc.log import *
 from create_test_dir import produce_dir
@@ -37,7 +37,7 @@ def seed_test_dirs(min_file_size, max_file_size, files_num, base_dir, ovlfs_reg_
         os.makedirs(os.path.join(ovlfs_dir, OVLFS_MERGE_DIR), exist_ok=True)
         os.makedirs(os.path.join(ovlfs_dir, OVLFS_WORK_DIR), exist_ok=True)
     if seed_batch:
-        setup_batch(base_dir=base_dir, number_of_directories=dirs_in_batch, number_of_files=files_num, lower_size_bound=min_file_size, upper_size_bound=max_file_size)
+        setup_batch(base_dir=base_dir, number_of_directories=dirs_in_batch, lower_size_bound=min_file_size, upper_size_bound=max_file_size)
     else:        
         produce_dir(base_dir, files_num, min_file_size, max_file_size)
     try:
@@ -105,7 +105,7 @@ def main():
         base_dir                = str(options.base_dir)
         ovlfs_reg_dir           = str(options.ovlfs_reg_dir)
         ovlfs_tuned_dir         = str(options.ovlfs_tuned_dir)
-        redirect_dir              = bool(options.redirect_dir)
+        redirect_dir            = bool(options.redirect_dir)
         metacopy                = bool(options.metacopy)
         runs_num                = int(options.runs_num)
         output_path             = str(options.output_path)
@@ -148,29 +148,25 @@ def main():
         mount_filesystems(ovlfs_reg_dir, ovlfs_tuned_dir, metacopy, redirect_dir)    
         create_output_dirs(output_path)
 
-    benchmark_functions = [rename_directory]
+    benchmark_functions = [move_directory]
 
     base_dir_res = list()
     ovlfs_tuned_res = list()
-    ovlfs_reg_res = list()
+    ovlfs_reg_res = list() 
     for func in benchmark_functions:
         base_dir_res.append(run_benchmark(base_dir, runs_num, func))
         ovlfs_tuned_res.append(run_benchmark(os.path.join(ovlfs_tuned_dir, OVLFS_MERGE_DIR), runs_num, func))
-        if metacopy:
-            ovlfs_reg_res.append(run_benchmark(os.path.join(ovlfs_reg_dir, OVLFS_MERGE_DIR), runs_num, func))
+        ovlfs_reg_res.append(run_benchmark(os.path.join(ovlfs_reg_dir, OVLFS_MERGE_DIR), runs_num, func))
 
     for res in base_dir_res:
         output_result(output_path, BASELINE_RESULT_FILE_NAME, res)
     for res in ovlfs_reg_res:
-        if metacopy:    
-            output_result(output_path, REGULAR_OVLFS_RESULT_FILE_NAME, res) 
+        output_result(output_path, REGULAR_OVLFS_RESULT_FILE_NAME, res) 
     for res in ovlfs_tuned_res:
         output_result(output_path, TUNED_OVLFS_RESULT_FILE_NAME, res)
     
-    if not metacopy and redirect_dir:
-        plot_results(output_path, ['baseline', 'ovlfs_tuned'])
-    else:
-        plot_results(output_path, ['baseline', 'ovlfs_regular', 'ovlfs_tuned'])
+    plot_results(output_path)
+    
     if unmount_ovlfs:
         unmount_filesystems(ovlfs_reg_dir, ovlfs_tuned_dir)
    
