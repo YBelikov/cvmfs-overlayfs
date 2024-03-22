@@ -1,7 +1,8 @@
-from pathlib import Path
 import os
 import shutil
+from misc.utils import system
 from time import perf_counter
+from pathlib import Path
 
 def chmod(file):
     start_time = perf_counter()
@@ -18,6 +19,9 @@ def read(file):
         end_time = perf_counter()
     return (end_time - start_time) * 1000
 
+
+def cpp_chmod(input_path, output_path):
+    system(f'../cpp_benchmark_ops/benchmark_chmod 1000 {input_path} {output_path}')
 
 def touch_pathlib(file):
     pathlib_converted_file = Path(file)

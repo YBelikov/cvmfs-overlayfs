@@ -18,7 +18,7 @@ def produce_dir(path, number_of_files, min_file_size, max_file_size):
         total_file_size += create_random_file(target_file_path=target_file_path, min_size=min_file_size, max_size=max_file_size)
     return total_file_size
 
-def produce_dir(path, max_directory_size):
+def seed_directory(path, max_directory_size):
     Logger.log(LogLevel.INFO, f'Seeding directory at path: {path}')
     os.makedirs(path, exist_ok=True)
     total_file_size = 0
@@ -69,7 +69,7 @@ def main():
         exit(1)
 
     target_dir_path = args[0]
-    produce_dir(target_dir_path, number_of_files, min_file_size, max_file_size)
+    produce_dir(path=target_dir_path, number_of_files=number_of_files, min_file_size=min_file_size, max_file_size=max_file_size)
 
 if __name__ == '__main__':
     main()
