@@ -2,7 +2,7 @@
 
 import os
 from misc import Logger, LogLevel
-from create_test_dir import produce_dir
+from benchmarks.python.create_test_dir import produce_dir
 from optparse import OptionParser
 
 def setup_batch(base_dir, number_of_directories, lower_size_bound, upper_size_bound):

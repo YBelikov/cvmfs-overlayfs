@@ -5,15 +5,15 @@
 # Definetely, anyone can use scripts from this repo as standalone without running this script
 
 import os
-from benchmarks.python.ops_to_benchmark import chmod, read, rename_directory, move_directory, cpp_chmod, cpp_update_time
+from ops_to_benchmark import chmod, read, rename_directory, move_directory, cpp_chmod, cpp_update_time
 from optparse import OptionParser
 from misc.log import *
-from benchmarks.python.create_test_dir import produce_dir
+from create_test_dir import produce_dir
 from misc.copy_dir import copy_dir
 from misc.utils import system
-from benchmarks.python.plot_comparison import plot_results
-from benchmarks.python.perform_benchmarks import benchmark_avg
-from benchmarks.python.setup_file_batches import setup_batch
+from plot_comparison import plot_results
+from perform_benchmarks import benchmark_avg
+from setup_file_batches import setup_batch
 from pathlib import Path
 
 OVLFS_LOWER_DIR='lower'
@@ -109,7 +109,7 @@ def main():
         ovlfs_tuned_dir         = str(options.ovlfs_tuned_dir)
         redirect_dir            = bool(options.redirect_dir)
         metacopy                = bool(options.metacopy)
-      #  runs_num                = int(options.runs_num)
+        runs_num                = int(options.runs_num)
         output_path             = str(options.output_path)
         unmount_ovlfs           = bool(options.unmount_ovlfs)
         delete_files            = bool(options.delete_files)
@@ -134,9 +134,9 @@ def main():
         Logger.log(LogLevel.ERROR, 'You should provide positive number of files!')
         exit(1)
 
-    # if runs_num <= 0:
-    #     Logger.log(LogLevel.ERROR, 'You should provide positive number of test runs!')
-    #     exit(1)
+    if runs_num <= 0:
+        Logger.log(LogLevel.ERROR, 'You should provide positive number of test runs!')
+        exit(1)
     
     base_dir = os.path.expanduser(base_dir)
     ovlfs_reg_dir = os.path.expanduser(ovlfs_reg_dir)
@@ -152,24 +152,10 @@ def main():
 
     benchmark_functions = [cpp_update_time]
 
-    base_dir_res = list()
-    ovlfs_tuned_res = list()
-    ovlfs_reg_res = list() 
     for func in benchmark_functions:
         func(base_dir, Path(output_path) / func.__name__ / BASELINE_RESULT_FILE_NAME)
         func(Path(ovlfs_reg_dir) / OVLFS_MERGE_DIR, Path(output_path) / func.__name__/ REGULAR_OVLFS_RESULT_FILE_NAME)
         func(Path(ovlfs_tuned_dir) / OVLFS_MERGE_DIR, Path(output_path) / func.__name__ / TUNED_OVLFS_RESULT_FILE_NAME)
-    #     base_dir_res.append(run_benchmark(base_dir, runs_num, func))
-    #     ovlfs_tuned_res.append(run_benchmark(os.path.join(ovlfs_tuned_dir, OVLFS_MERGE_DIR), runs_num, func))
-    #     ovlfs_reg_res.append(run_benchmark(os.path.join(ovlfs_reg_dir, OVLFS_MERGE_DIR), runs_num, func))
-
-    # for res in base_dir_res:
-    #     output_result(output_path, BASELINE_RESULT_FILE_NAME, res)
-    # for res in ovlfs_reg_res:
-    #     output_result(output_path, REGULAR_OVLFS_RESULT_FILE_NAME, res) 
-    # for res in ovlfs_tuned_res:
-    #     output_result(output_path, TUNED_OVLFS_RESULT_FILE_NAME, res)
-    
     plot_results(output_path)
     
     if unmount_ovlfs:
