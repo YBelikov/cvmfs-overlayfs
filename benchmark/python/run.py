@@ -148,7 +148,7 @@ def main():
         mount_filesystems(ovlfs_reg_dir, ovlfs_tuned_dir, metacopy, redirect_dir)    
         create_output_dirs(output_path)
 
-    benchmark_functions = [move_directory]
+    benchmark_functions = [read]
 
     base_dir_res = list()
     ovlfs_tuned_res = list()

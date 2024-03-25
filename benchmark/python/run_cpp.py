@@ -5,15 +5,15 @@
 # Definetely, anyone can use scripts from this repo as standalone without running this script
 
 import os
-from ops_to_benchmark import chmod, read, rename_directory, move_directory, cpp_chmod, cpp_update_time
+from benchmarks.python.ops_to_benchmark import chmod, read, rename_directory, move_directory, cpp_chmod, cpp_update_time
 from optparse import OptionParser
 from misc.log import *
-from create_test_dir import produce_dir
+from benchmarks.python.create_test_dir import produce_dir
 from misc.copy_dir import copy_dir
 from misc.utils import system
-from plot_comparison import plot_results
-from perform_benchmarks import benchmark_avg
-from setup_file_batches import setup_batch
+from benchmarks.python.plot_comparison import plot_results
+from benchmarks.python.perform_benchmarks import benchmark_avg
+from benchmarks.python.setup_file_batches import setup_batch
 from pathlib import Path
 
 OVLFS_LOWER_DIR='lower'
@@ -90,7 +90,7 @@ def main():
     parser.add_option('--overlay-fs-tuned-dir', dest='ovlfs_tuned_dir', default = '~/ovlfs_tuned', help='Path to directory where overlay FS structure with additional params will be spanned')
     parser.add_option('--redirect-dir', dest='redirect_dir', default = False, help='redirect_dir config option state for overlayfs mount')
     parser.add_option('--metacopy', dest='metacopy', default = False, help='metacopy config option state for overlayfs mount') 
-   # parser.add_option('--runs-num', dest='runs_num', default = 100, help='Number of operation runs during benchmarking')
+    parser.add_option('--runs-num', dest='runs_num', default = 100, help='Number of operation runs during benchmarking')
     parser.add_option('--output-path', dest='output_path', default = '~/ovlfs_benchmark_output', help='Path where files with benchmarking results are stored')
     parser.add_option('--unmount-ovlfs', dest='unmount_ovlfs', default = False, help='Specifies the need to unmount ovelray filesystems')
     parser.add_option('--delete-files', dest='delete_files', default = False, help='Specifies the need to delete seeded files and directories at the end of run')
