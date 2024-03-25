@@ -30,13 +30,11 @@ def main():
     This script generates a specified number of directories with a list of randomly filled files of specific sizes in each directory.'
     parser = OptionParser(usage)
     parser.add_option('-d', '--number-of-directories', dest='number_of_directories', default=1, help='Number of directories to be generated (number of chosen size-points) in the specified range')
-   # parser.add_option('-f', '--number-of-files', dest='number_of_files', default=1, help='Number of files per each directory')
     parser.add_option('-l', '--lower-size-bound', dest='lower_size_bound', default=0, help='The lower bound of the size interval')
     parser.add_option('-u', '--upper-size-bound', dest='upper_size_bound', default=1000000, help='The uper bound of the size interval')
     (options, args) = parser.parse_args()
     try:
         number_of_directories   = int(options.number_of_directories)
-    #    number_of_files         = int(options.number_of_files)
         lower_size_bound        = int(options.lower_size_bound)
         upper_size_bound        = int(options.upper_size_bound)
     except ValueError:

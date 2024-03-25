@@ -53,9 +53,9 @@ def main():
     usage = "usage: %prog [options] <destination path>\n\
     This creates dummy folder filled with files in the specified range."
     parser = OptionParser(usage)
-    parser.add_option("-n", "--number-of-files",    dest="number_of_files",     default=100,    help="the number of files to be generated in the given directory")
-    parser.add_option("-l", "--min-file-size",      dest="min_file_size",       default=0,      help="minimal file size for random file contents in bytes")
-    parser.add_option("-u", "--max-file-size",      dest="max_file_size",       default=102400, help="maximal file size for random file contents in bytes")
+    parser.add_option("--number-of-files",    dest="number_of_files",     default=100,    help="the number of files to be generated in the given directory")
+    parser.add_option("--min-file-size",      dest="min_file_size",       default=0,      help="minimal file size for random file contents in bytes")
+    parser.add_option("--max-file-size",      dest="max_file_size",       default=102400, help="maximal file size for random file contents in bytes")
  
     (options, args) = parser.parse_args()
     if len(args) != 1:

@@ -5,7 +5,7 @@
 # Definetely, anyone can use scripts from this repo as standalone without running this script
 
 import os
-from ops_to_benchmark import chmod, read, rename_directory, move_directory, cpp_chmod
+from ops_to_benchmark import chmod, read, rename_directory, move_directory, cpp_chmod, cpp_update_time
 from optparse import OptionParser
 from misc.log import *
 from create_test_dir import produce_dir
@@ -90,7 +90,7 @@ def main():
     parser.add_option('--overlay-fs-tuned-dir', dest='ovlfs_tuned_dir', default = '~/ovlfs_tuned', help='Path to directory where overlay FS structure with additional params will be spanned')
     parser.add_option('--redirect-dir', dest='redirect_dir', default = False, help='redirect_dir config option state for overlayfs mount')
     parser.add_option('--metacopy', dest='metacopy', default = False, help='metacopy config option state for overlayfs mount') 
-    parser.add_option('--runs_num', dest='runs_num', default = 100, help='Number of operation runs during benchmarking')
+   # parser.add_option('--runs-num', dest='runs_num', default = 100, help='Number of operation runs during benchmarking')
     parser.add_option('--output-path', dest='output_path', default = '~/ovlfs_benchmark_output', help='Path where files with benchmarking results are stored')
     parser.add_option('--unmount-ovlfs', dest='unmount_ovlfs', default = False, help='Specifies the need to unmount ovelray filesystems')
     parser.add_option('--delete-files', dest='delete_files', default = False, help='Specifies the need to delete seeded files and directories at the end of run')
@@ -109,7 +109,7 @@ def main():
         ovlfs_tuned_dir         = str(options.ovlfs_tuned_dir)
         redirect_dir            = bool(options.redirect_dir)
         metacopy                = bool(options.metacopy)
-        runs_num                = int(options.runs_num)
+      #  runs_num                = int(options.runs_num)
         output_path             = str(options.output_path)
         unmount_ovlfs           = bool(options.unmount_ovlfs)
         delete_files            = bool(options.delete_files)
@@ -134,9 +134,9 @@ def main():
         Logger.log(LogLevel.ERROR, 'You should provide positive number of files!')
         exit(1)
 
-    if runs_num <= 0:
-        Logger.log(LogLevel.ERROR, 'You should provide positive number of test runs!')
-        exit(1)
+    # if runs_num <= 0:
+    #     Logger.log(LogLevel.ERROR, 'You should provide positive number of test runs!')
+    #     exit(1)
     
     base_dir = os.path.expanduser(base_dir)
     ovlfs_reg_dir = os.path.expanduser(ovlfs_reg_dir)
@@ -150,7 +150,7 @@ def main():
         mount_filesystems(ovlfs_reg_dir, ovlfs_tuned_dir, metacopy, redirect_dir)    
         create_output_dirs(output_path)
 
-    benchmark_functions = [cpp_chmod]
+    benchmark_functions = [cpp_update_time]
 
     base_dir_res = list()
     ovlfs_tuned_res = list()

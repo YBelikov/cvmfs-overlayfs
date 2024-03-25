@@ -19,10 +19,12 @@ def calc_dir_size(dir):
     total_size = 0
     directory_contents = list_absolute_file_paths(dir)
     for file in directory_contents:
-        total_size += os.stat(file).st_size
+        if os.path.isfile(file):
+            total_size += os.stat(file).st_size
+        else:
+            total_size += calc_dir_size(file)
     return total_size
 
-# Runs command for each file in a given FS object: 
 def benchmark_avg(file_system_object_path, number_of_runs, benchmark_func):
     sizes = list()
     avg_times = list()
@@ -30,6 +32,7 @@ def benchmark_avg(file_system_object_path, number_of_runs, benchmark_func):
     if len(sub_fs_objects) == 0:
         Logger.log(LogLevel.ERROR, "No files in the provided base directory")
         exit(1)
+    
     if os.path.isdir(sub_fs_objects[0]):
         for subdir in sub_fs_objects:
             #absolute_file_paths = list_absolute_file_paths(subdir)
@@ -50,6 +53,31 @@ def benchmark_avg(file_system_object_path, number_of_runs, benchmark_func):
         for size in sizes_to_times.keys():
             sizes.append(size)
     return OperationBenchmarkResult(benchmark_func.__name__, sizes, avg_times)
+
+# Runs command for each file in a given FS object: 
+def benchmark_walk_tree_avg(file_system_object_path, number_of_runs, operation):
+    sizes = list()
+    avg_times = list()
+    dirpath, dirnames, filenames = os.walk(file_system_object_path)
+    times_of_runs = 0
+    for dirname in dirnames:
+        full_directory_path = os.path.join(dirpath, dirname)
+        if not operation.condition(full_directory_path):
+            continue
+        sizes.append(calc_dir_size(full_directory_path))
+        for _ in range(number_of_runs):
+            times_of_runs += operation.func(full_directory_path)  
+        avg_times.append(times_of_runs // number_of_runs)
+        benchmark_walk_tree_avg(file_system_object_path=full_directory_path, number_of_runs=number_of_runs, operation=operation)
+
+    for filename in filenames:
+        full_file_path = os.path.join(dirpath, filename)
+        file_size = os.stat(full_file_path).st_size
+        sizes.append(file_size)
+        for _ in range(number_of_runs):
+            times_of_runs += operation.func(full_file_path)
+        avg_times.append(times_of_runs // number_of_runs)
+    return OperationBenchmarkResult(operation.func.__name__, sizes, avg_times)
 
 def output_result(path_to_result, type, benchmark_result):
     path_to_command_results = os.path.join(path_to_result, benchmark_result.name)
@@ -74,9 +102,9 @@ def main():
     usage = 'usage: <target path> [options]\n\
     This script generates a specified number of directories with a list of randomly filled files of specific sizes in each directory.'
     parser = OptionParser(usage)
-    parser.add_option('-t', '--path-to-target-dir', dest='path_to_target_dir', help='Path to the target dir for benchmarking')
-    parser.add_option('-n', '--number-of-runs', dest='number_of_runs', default=1, help='Number of operation repetetions per each file')
-    parser.add_option('-r', '--path-to-result', dest='path_to_result', help='Path to the directory where files with results stored')
+    parser.add_option('--path-to-target-dir', dest='path_to_target_dir', help='Path to the target dir for benchmarking')
+    parser.add_option('--number-of-runs', dest='number_of_runs', default=1, help='Number of operation repetetions per each file')
+    parser.add_option('--path-to-result', dest='path_to_result', help='Path to the directory where files with results stored')
     (options, _) = parser.parse_args()
     try:
         path_to_target_dir      = os.path.expanduser(str(options.path_to_target_dir))

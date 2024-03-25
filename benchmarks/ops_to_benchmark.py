@@ -23,6 +23,9 @@ def read(file):
 def cpp_chmod(input_path, output_path):
     system(f'../cpp_benchmark_ops/benchmark_chmod 1000 {input_path} {output_path}')
 
+def cpp_update_time(input_path, output_path):
+    system(f'../cpp_benchmark_ops/bin/benchmark 1000 {input_path} {output_path}')
+
 def touch_pathlib(file):
     pathlib_converted_file = Path(file)
     start_time = perf_counter()
