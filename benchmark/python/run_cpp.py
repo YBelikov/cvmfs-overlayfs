@@ -8,7 +8,7 @@ import os
 from ops_to_benchmark import chmod, read, rename_directory, move_directory, cpp_chmod, cpp_update_time
 from optparse import OptionParser
 from misc.log import *
-from create_test_dir import produce_dir
+from create_test_setup import produce_dir
 from misc.copy_dir import copy_dir
 from misc.utils import system
 from plot_comparison import plot_results

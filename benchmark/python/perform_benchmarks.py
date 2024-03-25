@@ -2,7 +2,7 @@
 
 import os
 import matplotlib.pyplot as plt
-from ops_to_benchmark import chmod
+from ops_to_benchmark import chmod, move_directory
 from optparse import OptionParser
 from collections import defaultdict
 from misc import Logger
@@ -15,6 +15,11 @@ class OperationBenchmarkResult:
         self.sizes = sizes
         self.operations_times = operations_times
 
+class Operation:
+    def __init__(self, condition, func):
+        self.condition = condition
+        self.func = func
+
 def calc_dir_size(dir):
     total_size = 0
     directory_contents = list_absolute_file_paths(dir)
@@ -25,58 +30,27 @@ def calc_dir_size(dir):
             total_size += calc_dir_size(file)
     return total_size
 
-def benchmark_avg(file_system_object_path, number_of_runs, benchmark_func):
-    sizes = list()
-    avg_times = list()
-    sub_fs_objects = list_absolute_file_paths(file_system_object_path)
-    if len(sub_fs_objects) == 0:
-        Logger.log(LogLevel.ERROR, "No files in the provided base directory")
-        exit(1)
-    
-    if os.path.isdir(sub_fs_objects[0]):
-        for subdir in sub_fs_objects:
-            #absolute_file_paths = list_absolute_file_paths(subdir)
-            sizes.append(calc_dir_size(subdir)) 
-            times_of_runs = 0.0
-            for run_idx in range(number_of_runs):
-                #for file_path in absolute_file_paths:
-                    times_of_runs += benchmark_func(subdir)
-            avg_times.append(times_of_runs)
-    else:
-        sizes_to_times = defaultdict(int)
-        for run_idx in range(number_of_runs):
-            for file in sub_fs_objects:
-                file_size = os.stat(file).st_size
-                sizes_to_times[file_size] += benchmark_func(file)
-        for time_of_run in sizes_to_times.values():
-            avg_times.append(time_of_run)
-        for size in sizes_to_times.keys():
-            sizes.append(size)
-    return OperationBenchmarkResult(benchmark_func.__name__, sizes, avg_times)
-
 # Runs command for each file in a given FS object: 
 def benchmark_walk_tree_avg(file_system_object_path, number_of_runs, operation):
     sizes = list()
     avg_times = list()
-    dirpath, dirnames, filenames = os.walk(file_system_object_path)
-    times_of_runs = 0
-    for dirname in dirnames:
-        full_directory_path = os.path.join(dirpath, dirname)
-        if not operation.condition(full_directory_path):
-            continue
-        sizes.append(calc_dir_size(full_directory_path))
-        for _ in range(number_of_runs):
-            times_of_runs += operation.func(full_directory_path)  
-        avg_times.append(times_of_runs // number_of_runs)
-        benchmark_walk_tree_avg(file_system_object_path=full_directory_path, number_of_runs=number_of_runs, operation=operation)
-
-    for filename in filenames:
-        full_file_path = os.path.join(dirpath, filename)
-        file_size = os.stat(full_file_path).st_size
-        sizes.append(file_size)
-        for _ in range(number_of_runs):
-            times_of_runs += operation.func(full_file_path)
-        avg_times.append(times_of_runs // number_of_runs)
+    with os.scandir(file_system_object_path) as it:
+        for entry in it:
+            times_of_runs = 0
+            if entry.is_dir():
+                if not operation.condition(entry.path):
+                    continue
+                sizes.append(calc_dir_size(entry.path))
+                for _ in range(number_of_runs):
+                    times_of_runs += operation.func(entry.path)  
+                avg_times.append(times_of_runs / number_of_runs)
+                benchmark_walk_tree_avg(file_system_object_path=entry.path, number_of_runs=number_of_runs, operation=operation)
+            if entry.is_file():
+                file_size = os.stat(entry.path).st_size
+                sizes.append(file_size)
+                for _ in range(number_of_runs):
+                    times_of_runs += operation.func(entry.path)
+                avg_times.append(times_of_runs / number_of_runs)
     return OperationBenchmarkResult(operation.func.__name__, sizes, avg_times)
 
 def output_result(path_to_result, type, benchmark_result):
@@ -119,11 +93,13 @@ def main():
     Logger.log(LogLevel.DEBUG, f'Target: {path_to_result}')
     if not os.path.isdir(path_to_target_dir):
         Logger.log(LogLevel.INFO,"Provide a path to a directory!")
-    benchmark_result = benchmark_avg(path_to_target_dir, number_of_runs, chmod)
+
+    op_to_test = Operation(condition=lambda s: os.path.isdir(s), func=move_directory)
+    benchmark_result = benchmark_walk_tree_avg(path_to_target_dir, number_of_runs, op_to_test)
     if os.path.exists(path_to_target_dir):
         Logger.log(LogLevel.INFO, f'Making dir: {path_to_result}')
         os.makedirs(path_to_result, exist_ok=True)
-    output_result(path_to_result, benchmark_result)
+    output_result(path_to_result, 'baseline', benchmark_result)
 
 if __name__ == '__main__':
     main()

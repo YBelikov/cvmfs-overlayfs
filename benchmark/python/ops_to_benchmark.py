@@ -45,8 +45,8 @@ def rename_directory(file):
     return (end_time - start_time) * 1000
 
 def move_directory(file):
-    if not os.path.isdir(file):
-        return 0.0
+    # if not os.path.isdir(file):
+    #     return 0.0
     start_time = perf_counter()
     shutil.move(src=file, dst=f'{file}_renamed')
     end_time = perf_counter()

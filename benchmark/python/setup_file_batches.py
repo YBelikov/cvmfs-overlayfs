@@ -2,7 +2,7 @@
 
 import os
 from misc import Logger, LogLevel
-from benchmarks.python.create_test_dir import produce_dir
+from create_test_setup import produce_dir, seed_directory
 from optparse import OptionParser
 
 def setup_batch(base_dir, number_of_directories, lower_size_bound, upper_size_bound):
@@ -22,7 +22,7 @@ def setup_batch(base_dir, number_of_directories, lower_size_bound, upper_size_bo
             continue
         os.makedirs(dir_path)
         # Produce subdirectory with files of equal size
-        produce_dir(path=dir_path, max_directory_size=total_dir_size)
+        seed_directory(path=dir_path, max_directory_size=total_dir_size)
     return
 
 def main():

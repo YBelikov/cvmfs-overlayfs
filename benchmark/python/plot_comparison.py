@@ -31,7 +31,7 @@ def main():
     usage = 'usage: <target path> [options]\n\
     This script plots a graph with benchmarking results acquired for baseline, overlayfs with features and regular overlayfs'
     parser = OptionParser(usage)
-    parser.add_option('-t', '--path-to-base-res', dest='path_to_base_res', default='', help='Path to the file with baseline results')
+    parser.add_option('--path-to-base-res', dest='path_to_base_res', default='', help='Path to the file with baseline results')
     (options, _) = parser.parse_args()
     
     try:
