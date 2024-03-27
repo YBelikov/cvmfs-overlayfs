@@ -46,23 +46,23 @@ Note: Benchmarking runs after the first time produce results similar to each oth
 <h3>chmod() results for setup 1 (Alma Linux 9):</h3>
 
 First run of benchmarking script:
-![alt text](/plots/alma_linux_9/100kb_35mb_range_1st_run.png)
+![alt text](/plots/alma_linux_9/chmod/100kb_61mb_1st_run.png)
 Subsequent run of benchmarking script:
-![alt text](/plots/alma_linux_9/100kb_35mb_range_2nd_run.png)
+![alt text](/plots/alma_linux_9/chmod/100kb_61mb_2nd_run.png)
 
 <h3>chmod() results for setup 2 (Ubuntu):</h3>
 
 First run of benchmarking script:
-![alt text](/plots/ubuntu/100kb_61mb_1st_run.png)
+![alt text](/plots/ubuntu/chmod/100kb_35mb_range_1st_run.png)
 Subsequent run of benchmarking script:
-![alt text](/plots/ubuntu/100kb_61mb_2nd_run.png)
+![alt text](/plots/ubuntu/chmod/100kb_35mb_range_2nd_run.png)
 
 <h3>chmod() results for setup 3 (Alma Linux 8):</h3>
 
 First run of benchmarking script:
-![alt text](/plots/alma_linux_8/100kb_35mb_range_1st_run.png)
+![alt text](/plots/alma_linux_8/chmod/100kb_35mb_range_1st_run.png)
 Subsequent run of benchmarking script:
-![alt text](/plots/alma_linux_8/100kb_35mb_range_2nd_run.png)
+![alt text](/plots/alma_linux_8/chmod/100kb_35mb_range_2nd_run.png)
 
 Obviously, there is only marginal increase in the performance on both the physical device and virtual machine running Alma Linux. But Ubuntu OS plot for regular OverlayFS setup demonstrates existing correlaction between file size and operation execution time. Moreover we can observe improvement with metacopy feature being turned on, but this speed-up is still not very significant from user's point of view as it influences benchmark at submiliseconds magnitude. 
 On top of that, we can observe a small speed-up on the first run with metacopy feature being turned on (when no files from lower directore are presented in upper directory), but almost equal performance for regular and tuned setup of OverlayFS on susbsequent runs. 
