@@ -3,8 +3,8 @@
 import os
 import shutil
 import sys
-from .log import *
-from .utils import list_absolute_file_paths
+from log import *
+from utils import list_absolute_file_paths
  
 def cleanup_dir(target_dir):
     if not os.path.isdir(target_dir):

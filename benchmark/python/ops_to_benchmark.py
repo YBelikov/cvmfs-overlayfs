@@ -20,11 +20,11 @@ def read(file):
     return (end_time - start_time) * 1000
 
 
-def cpp_chmod(input_path, output_path):
-    system(f'../cpp_benchmark_ops/benchmark_chmod 1000 {input_path} {output_path}')
+def cpp_chmod(input_path, output_path, runs_num):
+    system(f'../cpp/bin/benchmark {runs_num} {input_path} {output_path}')
 
-def cpp_update_time(input_path, output_path):
-    system(f'../cpp_benchmark_ops/bin/benchmark 1000 {input_path} {output_path}')
+def cpp_update_time(input_path, output_path, runs_num):
+    system(f'../cpp/bin/benchmark {runs_num} {input_path} {output_path}')
 
 def touch_pathlib(file):
     pathlib_converted_file = Path(file)
@@ -45,8 +45,6 @@ def rename_directory(file):
     return (end_time - start_time) * 1000
 
 def move_directory(file):
-    # if not os.path.isdir(file):
-    #     return 0.0
     start_time = perf_counter()
     shutil.move(src=file, dst=f'{file}_renamed')
     end_time = perf_counter()

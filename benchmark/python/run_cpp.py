@@ -12,7 +12,7 @@ from create_test_setup import produce_dir
 from misc.copy_dir import copy_dir
 from misc.utils import system
 from plot_comparison import plot_results
-from perform_benchmarks import benchmark_avg
+from perform_benchmarks import benchmark_walk_tree_avg
 from setup_file_batches import setup_batch
 from pathlib import Path
 
@@ -65,7 +65,7 @@ def unmount_filesystems(ovlfs_reg_dir, ovlfs_tuned_dir):
 
 def run_benchmark(target_dir, runs_num, benchmark_func):
     Logger.log(LogLevel.INFO, f'Running benchmark on {target_dir} for {benchmark_func.__name__}')
-    return benchmark_avg(target_dir, runs_num, benchmark_func)
+    return benchmark_walk_tree_avg(target_dir, runs_num, benchmark_func)
 
 def create_output_dirs(output_path):
     os.makedirs(output_path, exist_ok=True)
@@ -153,9 +153,9 @@ def main():
     benchmark_functions = [cpp_update_time]
 
     for func in benchmark_functions:
-        func(base_dir, Path(output_path) / func.__name__ / BASELINE_RESULT_FILE_NAME)
-        func(Path(ovlfs_reg_dir) / OVLFS_MERGE_DIR, Path(output_path) / func.__name__/ REGULAR_OVLFS_RESULT_FILE_NAME)
-        func(Path(ovlfs_tuned_dir) / OVLFS_MERGE_DIR, Path(output_path) / func.__name__ / TUNED_OVLFS_RESULT_FILE_NAME)
+        func(base_dir, Path(output_path) / func.__name__ / BASELINE_RESULT_FILE_NAME, runs_num=runs_num)
+        func(Path(ovlfs_reg_dir) / OVLFS_MERGE_DIR, Path(output_path) / func.__name__/ REGULAR_OVLFS_RESULT_FILE_NAME, runs_num=runs_num)
+        func(Path(ovlfs_tuned_dir) / OVLFS_MERGE_DIR, Path(output_path) / func.__name__ / TUNED_OVLFS_RESULT_FILE_NAME, runs_num=runs_num)
     plot_results(output_path)
     
     if unmount_ovlfs:

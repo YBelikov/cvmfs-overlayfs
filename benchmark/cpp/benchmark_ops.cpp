@@ -8,7 +8,7 @@
 #include <fcntl.h>
 #include "scope_exit.h"
 
-using benchmark_map = std::map<uintmax_t, uint64_t>;
+using benchmark_map = std::map<uintmax_t, float>;
 
 void updateAccessTime(benchmark_map& benchmarkingResults, const std::filesystem::path& targetDir)
 {
@@ -106,7 +106,12 @@ int main(int argc, char** argv)
     benchmark_map benchmarkingResults;
     for (int i = 0; i < numberOfRuns; ++i)
     {
-        updateAccessTime(benchmarkingResults, inputDir);
+        changeMode(benchmarkingResults, inputDir);
+    }
+
+    for (auto& pair : benchmarkingResults)
+    {
+        pair.second /= numberOfRuns;
     }
     std::ofstream output(outputFile);
     writeOutput(output, benchmarkingResults);
