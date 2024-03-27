@@ -5,7 +5,7 @@
 # Definetely, anyone can use scripts from this repo as standalone without running this script
 
 import os
-from ops_to_benchmark import chmod, read, rename_directory, move_directory, cpp_chmod, cpp_update_time
+from ops_to_benchmark import chmod, read, rename_directory, move_directory, cpp_chmod, cpp_update_time, cpp_chown
 from optparse import OptionParser
 from misc.log import *
 from create_test_setup import produce_dir
@@ -150,7 +150,7 @@ def main():
         mount_filesystems(ovlfs_reg_dir, ovlfs_tuned_dir, metacopy, redirect_dir)    
         create_output_dirs(output_path)
 
-    benchmark_functions = [cpp_update_time]
+    benchmark_functions = [cpp_chown]
 
     for func in benchmark_functions:
         func(base_dir, Path(output_path) / func.__name__ / BASELINE_RESULT_FILE_NAME, runs_num=runs_num)

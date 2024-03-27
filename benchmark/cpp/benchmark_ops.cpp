@@ -54,6 +54,50 @@ void updateAccessTime(benchmark_map& benchmarkingResults, const std::filesystem:
     }
 }
 
+
+void changeOwner(benchmark_map& benchmarkingResults, const std::filesystem::path& targetDir) 
+{
+    if (!std::filesystem::is_directory(targetDir))
+    {
+        throw std::logic_error("Non directory provided!");
+    }
+    for (const auto& entry : std::filesystem::directory_iterator(targetDir))
+    {
+        if (!entry.is_regular_file())
+        {   
+            std::cout << entry.path();
+            continue;
+        }
+        struct stat fileInfo;
+        uid_t initialGID = 0;
+        uid_t initialUID = 0;
+
+        if (stat(entry.path().c_str(), &fileInfo) == 0) {
+            // Successfully retrieved file information
+            initialGID = fileInfo.st_gid;
+            initialUID = fileInfo.st_uid;
+        } else {
+            // Error occurred
+            perror("Failed to get file information");
+            exit(1);
+        }
+        auto start = std::chrono::high_resolution_clock::now();
+        chown(entry.path().c_str(), 0, 0);     
+        auto end = std::chrono::high_resolution_clock::now();
+        chown(entry.path().c_str(), initialUID, initialGID);
+        auto elapsedTime = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+        uintmax_t entrySize = entry.file_size();
+        if (benchmarkingResults.find(entrySize) == benchmarkingResults.end())
+        {
+            benchmarkingResults[entry.file_size()] = elapsedTime.count();
+        }
+        else 
+        {
+            benchmarkingResults[entry.file_size()] += elapsedTime.count();
+        }
+    }
+}
+
 void changeMode(benchmark_map& benchmarkingResults, const std::filesystem::path& targetDir) 
 {
     if (!std::filesystem::is_directory(targetDir))
@@ -106,7 +150,7 @@ int main(int argc, char** argv)
     benchmark_map benchmarkingResults;
     for (int i = 0; i < numberOfRuns; ++i)
     {
-        changeMode(benchmarkingResults, inputDir);
+        changeOwner(benchmarkingResults, inputDir);
     }
 
     for (auto& pair : benchmarkingResults)

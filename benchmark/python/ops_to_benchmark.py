@@ -26,6 +26,9 @@ def cpp_chmod(input_path, output_path, runs_num):
 def cpp_update_time(input_path, output_path, runs_num):
     system(f'../cpp/bin/benchmark {runs_num} {input_path} {output_path}')
 
+def cpp_chown(input_path, output_path, runs_num):
+    system(f'sudo ../cpp/bin/benchmark {runs_num} {input_path} {output_path}')
+
 def touch_pathlib(file):
     pathlib_converted_file = Path(file)
     start_time = perf_counter()
