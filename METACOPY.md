@@ -53,9 +53,9 @@ Subsequent run of benchmarking script:
 <h3>chmod() results for setup 2 (Ubuntu):</h3>
 
 First run of benchmarking script:
-![alt text](/plots/ubuntu/100kb_35mb_range_1st_run.png)
+![alt text](/plots/ubuntu/100kb_61mb_1st_run.png)
 Subsequent run of benchmarking script:
-![alt text](/plots/ubuntu/100kb_35mb_range_2nd_run.png)
+![alt text](/plots/ubuntu/100kb_61mb_2nd_run.png)
 
 <h3>chmod() results for setup 3 (Alma Linux 8):</h3>
 
